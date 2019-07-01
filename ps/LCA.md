@@ -13,6 +13,7 @@ int par[SZ]; //parent, root's parent is 0
 int lv[SZ]; //distance from root
 int vst[SZ]; //check dfs
 void dfs(int n, int parent, int level){
+  vst[n]=1;
   lv[n]=level;
   par[n]=parent;
   for(int nxt:graph[n]){
@@ -47,6 +48,7 @@ int par[MXH][SZ]; //dp for parent
 int vst[SZ]; //equal
 int n; // number of nodes
 void dfs(int x, int parent, int level){
+  vst[x]=1;
   par[0][x]=parent;
   lv[x]=level;
   for(int nxt: graph[x]){
@@ -77,10 +79,9 @@ int query(int x, int y){
     }
   }
   x=par[0][x];
-  y=par[0][y];
   return x;
 }
 ```
 
 ---
-코드가 컴파일이 되지 않거나 알고리즘적으로 오류가 있는 경우 문의 주시면 감사하겠습니다. 
+코드가 컴파일이 되지 않거나 알고리즘적으로 오류가 있는 경우 문의 주시면 감사하겠습니다.
