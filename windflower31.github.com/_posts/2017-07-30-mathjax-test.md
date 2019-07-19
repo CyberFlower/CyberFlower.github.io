@@ -4,6 +4,7 @@ title: MathJax Test
 date: 2017-07-30
 categories: test
 tags: mathjax 
+author: raiden
 ---
 
 mathjax in markdown :)
