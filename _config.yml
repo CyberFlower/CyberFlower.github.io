@@ -1,13 +1,13 @@
 # Site settings 
-title: 'Process Coding! Re:Debug'
-description: 'Algorithm PS blog!'
-keyword: 'C++, C, Python, acm-icpc, ps, acmicpc.net'
+title: 'CyberFlower Algorithm'
+description: 
+keyword: 'PS, icpc, algorithm'
 url: '' # your host
 
 # when build blog on server, if you don't need baseurl, you should leave this value blank.
 # if you're using GitHub Pages, set baseurl to your blog's .
-# for example, if your site is "kaeyleo.github.io", then this url should leave blank.
-# but if your created a repo named "myblog", and the site is "kaeyleo.github.io/myblog", change baseurl to '/myblog'
+# for example, if your site is "kaeyleo.github.io", then this url should leave blank.\
+# but if your created a repo named "myblog", and the site is "CyberFlower.github.io/myblog", change baseurl to '/myblog'
 baseurl: ''
 
 # Navigation links
@@ -19,10 +19,11 @@ nav:
 footer:
   since: 2019
 
-# Author 
-author: 'windflower'
-nickname: 'windflower'
-#avatar: '/assets/img/profile.png'
+# Author
+author: windflower
+nickname: windflower
+bio: 
+avatar: '/assets/img/profile.png'
 
 # Search
 search: true
@@ -33,16 +34,16 @@ nightMode: true
 # Comments 
 comments:
   disqus: false
-  disqus_url: 'https://liaokeyu.disqus.com/embed.js'
+  disqus_url: 
 
-# MathJax
+# MathJax 
 mathjax: true
 
 # Share
 social-share: false
-social-share-items: []
+social-share-items: ['facebook']
 
-# theme color 
+# theme color
 theme-color: 'default'  # pink or default
 
 # Post header background patterns (when the post no cover): circuitBoard, overlappingCircles, food, glamorous, ticTacToe, seaOfClouds
@@ -51,7 +52,7 @@ postPatterns: 'circuitBoard'
 # SNS settings 
 # url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
 sns:
-  github: '//github.com/windflower31/CyberFlower'
+  github: '//github.com/CyberFlower'
 
 # Tags
 recommend-tags: true # whether or not display recommend-tags on the sidebar
