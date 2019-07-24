@@ -10,6 +10,9 @@ url: '' # your host
 # but if your created a repo named "myblog", and the site is "CyberFlower.github.io/myblog", change baseurl to '/myblog'
 baseurl: ''
 
+# Fenced Code Blocks
+Fenced-Code-Blocks: true
+
 # Navigation links
 nav:
   home: '/'
