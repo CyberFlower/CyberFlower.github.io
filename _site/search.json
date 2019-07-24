@@ -1,9 +1,87 @@
 [
   
     {
+      "title"    : "Making blog in Github with jekyll",
+      "tags"     : "Github",
+      "url"      : "/2019/07/24/new_blog_setting.html"
+    } ,
+  
+    {
+      "title"    : "Segment tree with Lazy propagation",
+      "tags"     : "Algorithm",
+      "url"      : "/2019/07/22/seg,lazy.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/9015",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc9015.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/9009",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc9009.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/9006",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc9006.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/6101",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc6101.html"
+    } ,
+  
+    {
       "title"    : "icpc.me/4256",
       "tags"     : "PS",
       "url"      : "/2019/07/22/icpc4256.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/17293",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc17293.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/6101",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc17270.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/12865",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc12865.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/11003",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc11003.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/10251",
+      "tags"     : "PS",
+      "url"      : "/2019/07/22/icpc10251.html"
+    } ,
+  
+    {
+      "title"    : "RMQ(Range Minimum Query)",
+      "tags"     : "Algorithm",
+      "url"      : "/2019/07/22/RMQ.html"
+    } ,
+  
+    {
+      "title"    : "LCA(Least Common Ancestor)",
+      "tags"     : "Algorithm",
+      "url"      : "/2019/07/22/LCA.html"
     } 
   
 ]
