@@ -32,14 +32,20 @@ sudo apt-get install ruby-full
 sudo gem install jekyll bundler
 ```
 * 초기 설정 하기(처음 만드는 관리자)
-&nbsp; a. github에 가입합니다.
-&nbsp; b. Repository를 만듭니다. Repository 이름은 계정명+github.io로 해야 github에서 제공하는 블로그 서비스를 이용하기 편합니다. (ex. CyberFlower.github.io)
-&nbsp; c. 블로그를 장식할 배경인 theme을 가져옵니다. (노가다... ㄷㄷ)
-&nbsp; d. \_posts에 글을 씁니다. 보통 파일명은 yyyy/mm/dd 형식의 날짜+이름으로 작성하는 것이 일반적이며, 이래야 정상적으로 굴러가는 theme이 많은 듯 합니다. (ex. 2019-07-24-test.md)
-&nbsp;
+
+a. github에 가입합니다.
+
+b. Repository를 만듭니다. Repository 이름은 계정명+github.io로 해야 github에서 제공하는 블로그 서비스를 이용하기 편합니다. (ex. CyberFlower.github.io)
+
+c. 블로그를 장식할 배경인 theme을 가져옵니다. (노가다... ㄷㄷ)
+
+d. \_posts에 글을 씁니다. 보통 파일명은 yyyy/mm/dd 형식의 날짜+이름으로 작성하는 것이 일반적이며, 이래야 정상적으로 굴러가는 theme이 많은 듯 합니다. (ex. 2019-07-24-test.md)
+
 * 초기 설정 하기(관리자 초대를 받은 collaborators)
-&nbsp; a. email을 통해 권한을 얻습니다.
-&nbsp; b. 아래의 코드로 github에 연결합니다.
+
+a. email을 통해 권한을 얻습니다.
+
+b. 아래의 코드로 github에 연결합니다.
 ```
 git clone https://github.com/CyberFlower/CyberFlower.github.io.git // repository를 clone합니다.
 cd CyberFlower.github.io.git // 해당 폴더로 이동
@@ -62,12 +68,15 @@ git push origin master
 
 에러상황 극복에 관한 해결법은 제가 해결한 극히 제한적인 상황에서의 해결법입니다. 더 좋은 방법이 있다면 알려주세요.
 
-&nbsp; a. rebase in progress; onto ~~~
+a. rebase in progress; onto ~~~
+
 ```
 git rebase --skip
 2번 과정 반복
 ```
-&nbsp; b. git error: failed to push some refers to ~~~
+
+b. git error: failed to push some refers to ~~~
+
 ```
 git pull origin master
 message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
