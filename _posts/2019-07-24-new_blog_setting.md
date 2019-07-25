@@ -56,7 +56,7 @@ git init // initialize git repository
 #### 2. 리눅스상에서 쉽게 포스팅하는 command
 블로그는 이미 만들어졌고, 파일을 변경하거나 추가해야 할 때 사용하게 되는 command이다. 파일 경로를 바꾸지 않는 이상 대부분의 경우 아래의 command만 잘 따라주면 이상한 에러로 고생할 일이 없습니다.
 ```
-git pull  // 다른 사람이 update했을 수도 있으니 꼭 해줍시다!
+git pull origin master // 다른 사람이 update했을 수도 있으니 꼭 해줍시다!
 파일 업데이트 또는 수정 과정을 진행하고...
 git add . // 변경된 파일을 모두 추가
 git commit -m "변경내용" // 스냅샷 기능을 하는 commit을 해주지 않으면 에러가 뜬다! 꼭 해주자...
