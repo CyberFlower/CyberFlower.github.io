@@ -5,8 +5,8 @@
     <description></description>
     <link>http://localhost:4000//</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 25 Jul 2019 04:46:02 -0700</pubDate>
-    <lastBuildDate>Thu, 25 Jul 2019 04:46:02 -0700</lastBuildDate>
+    <pubDate>Thu, 25 Jul 2019 04:48:54 -0700</pubDate>
+    <lastBuildDate>Thu, 25 Jul 2019 04:48:54 -0700</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -610,7 +610,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-6101-식당&quot;&gt;백준 6101 식당&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;a href=&quot;icpc.me/6101&quot;&gt;icpc.me/6101&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/6101&quot;&gt;icpc.me/6101&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;간단하지만은 않은 다이나믹 프로그래밍 문제입니다. 저는 먼저 푼 친구가 시간복잡도가 O(n*sqrt(n))으로 풀 수 있다는 것을 알려주었음에도 푸는데 시간이 오래 걸렸어요…&lt;/p&gt;
 
