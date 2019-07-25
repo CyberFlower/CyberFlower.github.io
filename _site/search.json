@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Knuth DP Optimization",
+      "tags"     : "Algorithm",
+      "url"      : "/2019/07/25/Knuth_DP_Optimization.html"
+    } ,
+  
+    {
       "title"    : "Making blog in Github with jekyll",
       "tags"     : "Github",
       "url"      : "/2019/07/24/new_blog_setting.html"
