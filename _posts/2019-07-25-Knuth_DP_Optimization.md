@@ -30,18 +30,19 @@ $a \le b \le c \le d$ 일때 $C[a][c]+C[b][d] \le C[a][d]+C[b][c]$ 를 만족한
 조건 3)
 $a \le b \le c \le d$ 일때 $C[b][c] \le C[a][d]$ 를 만족한다.
 
-이 세 조건을 만족하면, $DP[i][j]=min_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$ 에서 $DP[i][j]$를 최소로 만드는 k를 $KN[i][j]$라고 하면, $KN[i][j-1] \le KN[i][j] \le KN[i+1][j]$를 만족한다.
+이 세 조건을 만족하면, $DP[i][j]=min_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$ 에서 $DP[i][j]$를 최소로 만드는 k를 $KN[i][j]$라고 하면,
+$$KN[i][j-1] \le KN[i][j] \le KN[i+1][j]$$를 만족한다.
 
 따라서 이를 이용하면 $O(N^{3})$의 DP를 $O(N^{2})$까지 줄일 수 있다.
 
 구현 Tip. $KN[i][j-1] \le KN[i][j] \le KN[i+1][j]$ 의 조건을 활용하기 위해서,
-DP[i][j]를 채우는 순서를 for(int d=1;d<K;d++) for(int i=1;i+d<=K;i++) {int j=i+d; DP[i][j]=~~~}로 진행해야 한다.
+DP[i][j]를 채우는 순서를 i와 j의 차이가 커지는 방향으로 진행해야 한다.
 
 ### 3. Knuth Optimization의 사용
 
 우선 파일 합치기 문제를 $O(K^{3})$로 해결할 때 사용했던 점화식을 다시 한 번 살펴보자.
 $DP[i][j]$=i번부터 j번까지를 합치는 데에 드는 비용으로 정의하면,
-$$DP[i][j]=min(DP[i][k]+DP[k+1][j])+(\sum_{p=i}^{j} {C_{p}}) (i \le k < j)$$
+$DP[i][j]=min(DP[i][k]+DP[k+1][j])(i \le k < j) + (\sum_{p=i}^{j} {C_{p}})$
 의 식이 된다.
 
 우선 $\sum_{p=i}^{j} {C_{p}}$를 $S[i][j]$라고 생각하면 이 S[i][j]는 조건 2와 조건 3을 만족한다.
@@ -91,4 +92,6 @@ int main(void)
 ```
 
 ### 4. 추가 팁
-만약 $DP[i][j]=min_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$이 아닌, $DP[i][j]=max_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$ 형태의 점화식이 나왔다면, nDP[i][j]=-DP[i][j]로 바꿔주면, $nDP[i][j]=max_{i<k<j}(nDP[i][k]+nDP[k][j])-C[i][j]$ 가 되어, -C[i][j]가 조건 2와 3을 만족한다면, Knuth Optimization을 사용할 수 있다.
+만약 $DP[i][j]=min_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$이 아닌, $DP[i][j]=max_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j]$ 형태의 점화식이 나왔다면,
+$nDP[i][j]=-DP[i][j]$로 바꿔주어 $nDP[i][j]=max_{i<k<j}(nDP[i][k]+nDP[k][j])-C[i][j]$가 된다.
+이 때, -C[i][j]가 조건 2와 3을 만족한다면, Knuth Optimization을 사용할 수 있다.
