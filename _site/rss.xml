@@ -5,8 +5,8 @@
     <description></description>
     <link>http://localhost:4000//</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 26 Jul 2019 07:41:19 -0700</pubDate>
-    <lastBuildDate>Fri, 26 Jul 2019 07:41:19 -0700</lastBuildDate>
+    <pubDate>Fri, 26 Jul 2019 07:53:07 -0700</pubDate>
+    <lastBuildDate>Fri, 26 Jul 2019 07:53:07 -0700</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -67,7 +67,7 @@
 
 &lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/11061&quot;&gt;https://www.acmicpc.net/problem/11061&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;./img/icpc11061-1.png&quot; alt=&quot;완전그래프&quot; width=&quot;100&quot; height=&quot;100&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/2019-07-26-icpc11061-1.png&quot; alt=&quot;완전그래프&quot; width=&quot;100&quot; height=&quot;100&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;위 사진처럼 모든 노드가 하나의 간선으로 연결되어 있는 그래프를 완전 그래프라고 정의한다.&lt;/p&gt;
 
