@@ -1,6 +1,18 @@
 [
   
     {
+      "title"    : "icpc.me/11068",
+      "tags"     : "PS",
+      "url"      : "/2019/07/26/icpc11068.html"
+    } ,
+  
+    {
+      "title"    : "icpc.me/11061",
+      "tags"     : "PS",
+      "url"      : "/2019/07/26/icpc11061.html"
+    } ,
+  
+    {
       "title"    : "Knuth DP Optimization",
       "tags"     : "Algorithm",
       "url"      : "/2019/07/25/Knuth_DP_Optimization.html"
