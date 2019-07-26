@@ -1,6 +1,6 @@
-# Site settings 
+# Site settings
 title: 'CyberFlower Algorithm'
-description: 
+description:
 keyword: 'PS, icpc, algorithm'
 url: '' # your host
 
@@ -22,7 +22,7 @@ footer:
 # Author
 author: windflower
 nickname: windflower
-bio: 
+bio:
 avatar: '/assets/img/profile.jpg'
 
 # Search
@@ -31,17 +31,13 @@ search: true
 # Night mode
 nightMode: true
 
-# Comments 
+# Comments
 comments:
   disqus: true
-  disqus_url: 
+  disqus_url:
 
-# MathJax 
+# MathJax
 mathjax: true
-
-# Share
-social-share: false
-social-share-items: ['facebook']
 
 # theme color
 theme-color: 'default'  # pink or default
@@ -49,7 +45,7 @@ theme-color: 'default'  # pink or default
 # Post header background patterns (when the post no cover): circuitBoard, overlappingCircles, food, glamorous, ticTacToe, seaOfClouds
 postPatterns: 'circuitBoard'
 
-# SNS settings 
+# SNS settings
 # url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
 sns:
   github: '//github.com/CyberFlower'

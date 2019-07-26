@@ -5,8 +5,8 @@
     <description></description>
     <link>http://localhost:4000//</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 25 Jul 2019 04:48:54 -0700</pubDate>
-    <lastBuildDate>Thu, 25 Jul 2019 04:48:54 -0700</lastBuildDate>
+    <pubDate>Fri, 26 Jul 2019 01:12:01 -0700</pubDate>
+    <lastBuildDate>Fri, 26 Jul 2019 01:12:01 -0700</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
     
       <item>
@@ -320,7 +320,9 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seg_find&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seg_find&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;idx&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;백준 10999번 구간 합 구하기 2(https://www.acmicpc.net/problem/10999) 정답 코드이다. 위 함수들을 그대로 사용하였지만 자료형의 차이가 있어 정답 코드를 다시 한 번 올린다.&lt;/p&gt;
+&lt;p&gt;백준 10999번 구간 합 구하기 2&lt;a href=&quot;https://www.acmicpc.net/problem/10999&quot;&gt;https://www.acmicpc.net/problem/10999&lt;/a&gt; 정답 코드이다.&lt;/p&gt;
+
+&lt;p&gt;위 함수들을 그대로 사용하였지만 자료형의 차이가 있어 정답 코드를 다시 한 번 올린다.&lt;/p&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include&amp;lt;bits/stdc++.h&amp;gt;
 &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -397,7 +399,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-9015-정사각형&quot;&gt;백준 9015 정사각형&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/9015&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/9015&quot;&gt;https://www.acmicpc.net/problem/9015&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;최적화가 굉장히 까다로운 문제였습니다. 조금이라도 시간 줄여 보려고 좋은 코드는 다 박아버렸더니 코드가 쓸데없이 길어졌네요…&lt;/p&gt;
 
@@ -491,7 +493,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-9009-피보나치&quot;&gt;백준 9009 피보나치&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/9009&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/9009&quot;&gt;https://www.acmicpc.net/problem/9009&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;그리디하게 풀 수 있다는 것만 알면 쉽습니다.&lt;/p&gt;
 
@@ -549,7 +551,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-9006-다리&quot;&gt;백준 9006 다리&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/9006&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/9006&quot;&gt;https://www.acmicpc.net/problem/9006&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;처음 문제를 보고 든 생각은 “다리의 높이를 기준으로 3분 탐색을 진행하여 최소값을 찾으면 되겠구나!” 였다. 하지만 자료형 변환 때문인지 팀 연습 때 3분 탐색으로 20번쯤 틀렸다…&lt;/p&gt;
 
@@ -610,7 +612,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-6101-식당&quot;&gt;백준 6101 식당&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/6101&quot;&gt;icpc.me/6101&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/6101&quot;&gt;https://www.acmicpc.net/problem/6101&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;간단하지만은 않은 다이나믹 프로그래밍 문제입니다. 저는 먼저 푼 친구가 시간복잡도가 O(n*sqrt(n))으로 풀 수 있다는 것을 알려주었음에도 푸는데 시간이 오래 걸렸어요…&lt;/p&gt;
 
@@ -701,7 +703,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-17293-맥주-99병&quot;&gt;백준 17293 맥주 99병&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/17293&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/17293&quot;&gt;https://www.acmicpc.net/problem/17293&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;재미있는 입출력 문제입니다. 설명은 딱히…&lt;/p&gt;
 
@@ -754,7 +756,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-17270-연예인은-힘들어&quot;&gt;백준 17270 연예인은 힘들어&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/17270&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/17270&quot;&gt;https://www.acmicpc.net/problem/17270&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;간단한 그래프 문제입니다. 노드의 개수가 100이하로 충분히 작기 때문에 벨만 포드 알고리즘, 다익스트라 알고리즘 등등 어떤 방법으로 풀어도 풀립니다.&lt;/p&gt;
 
@@ -830,7 +832,7 @@ message 입력창에 들어가면 CTRL+X로 탈출, 저장은 N
         <description>&lt;h3 id=&quot;백준-12865-평범한-배낭&quot;&gt;백준 12865 평범한 배낭&lt;/h3&gt;
 &lt;hr /&gt;
 
-&lt;p&gt;icpc.me/12865&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.acmicpc.net/problem/12865&quot;&gt;https://www.acmicpc.net/problem/12865&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;간단한 다이나믹 문제입니다.&lt;/p&gt;
 
