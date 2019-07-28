@@ -1,6 +1,12 @@
 [
   
     {
+      "title"    : "Network Flow Algorithm",
+      "tags"     : "Algorithm",
+      "url"      : "/2019/07/28/flow.html"
+    } ,
+  
+    {
       "title"    : "icpc.me/11068",
       "tags"     : "PS",
       "url"      : "/2019/07/26/icpc11068.html"
