@@ -1,20 +1,140 @@
----
----
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    {% for post in site.posts %}
-    <url>
-        <loc>{{ site.url }}{{ post.url}}</loc>
-    </url>
-    {% endfor %}
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-    {% for page in site.pages %}
-    {% if page.layout != nil %}
-    {% if page.layout != 'feed' %}
-    <url>
-        <loc>{{ site.url }}{{ page.url}}</loc>
-    </url>
-    {% endif %}
-    {% endif %}
-    {% endfor %}
+<url>
+  <loc>https://cyberflower.github.io/</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/tags.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/30/icpc17363.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/30/icpc17362.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/29/icpc15949.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/28/flow.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/26/icpc11068.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/26/icpc11061.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/page2/</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/25/Knuth_DP_Optimization.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/seg,lazy.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/RMQ.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/LCA.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc9015.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc9009.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc9006.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc6101.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc17293.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc17270.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc12865.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc11812.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc11003.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/22/icpc10251.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/2019/07/24/new_blog_setting.html</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/page3/</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://cyberflower.github.io/page4/</loc>
+  <lastmod>2019-07-31T01:15:46+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+
+
 </urlset>
