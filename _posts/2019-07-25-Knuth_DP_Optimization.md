@@ -1,12 +1,11 @@
 ---
 layout: post
 title: Knuth DP Optimization
+subtitle: Knuth DP Optimization 알고리즘
 date: 2019-07-25
 categories: Algorithm
 tags: Algorithm
 author: Miryu
----
-### Knuth DP Optimization 알고리즘
 ---
 
 DP Optimization은 DP 점화식이 어떠한 특정 조건을 만족할 경우 시간복잡도를 줄여줄 수 있는 기법이다.
