@@ -14,7 +14,7 @@ github 블로그를 시작하면서 너무 많은 삽질을 하였기에 저와 
 
 #### 0. markdown editor install(스킵하셔도 무관합니다.)
 
-1. Go to page https: /atom.io/ and install
+1. Go to page https://atom.io/ and install
 2. open atom
 3. File->Settings->install
 4. Search "markdown-preview-enhanced" and install

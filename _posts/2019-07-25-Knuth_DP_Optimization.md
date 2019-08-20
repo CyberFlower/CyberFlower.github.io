@@ -12,7 +12,7 @@ DP Optimization은 DP 점화식이 어떠한 특정 조건을 만족할 경우 �
 유명한 DP Optimization기법에는 Knuth Optimization, Divide & Conquer Optimization, Convex Hull Optimization(Convex Hull Trick) 이 있는데, 이 글에서는 Knuth Optimization만 다루고, 나머지는 다른 게시물에서 소개하도록 하겠다.
 
 ### 1. 예시 문제: 파일 합치기 2(BOJ 13974)
-https: /www.acmicpc.net/problem/13974
+https://www.acmicpc.net/problem/13974
 
 파일 합치기(BOJ 11066) 문제에서는 $K$가 최대 500이므로, $O(K^{3})$의 시간복잡도로 해결할 수 있다.
 그러나 이 문제에서는 $K$가 최대 5000이므로, $O(K^{3})$의 시간복잡도로는 TLE가 나게 된다.
