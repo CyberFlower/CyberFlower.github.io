@@ -5,7 +5,7 @@ subtitle: github에서 블로그 만들기, 간단한 포스팅
 date: 2019-07-24
 categories: Github
 tags: Github
-author: windflower
+author: cyberflower
 ---
 
 github 블로그를 시작하면서 너무 많은 삽질을 하였기에 저와 제 팀원, 그리고 혹시 제 블로그를 들어오게 된 여러분을 위해 이 게시물을 작성합니다.

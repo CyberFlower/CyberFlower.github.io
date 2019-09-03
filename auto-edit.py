@@ -18,19 +18,17 @@ def change_filename(files, ori, new):
 # if cnt given, change word less than cnt times per files
 def change_all_file(files,ori,new,cnt=0):
     for file in files:
-        if "icpc" in file:
-            if os.path.isfile(file):
-                open_file=open(file,'r',encoding='UTF-8')
-                read_file=open_file.read()
-                tmp=re.compile(ori)
-                read_file=tmp.sub(new,read_file,cnt)
-                write_file=open(file,'w',encoding='UTF-8')
-                write_file.write(read_file)            
-        else:
-            print(file)
+        if os.path.isfile(file):
+            open_file=open(file,'r',encoding='UTF-8')
+            read_file=open_file.read()
+            tmp=re.compile(ori)
+            read_file=tmp.sub(new,read_file,cnt)
+            write_file=open(file,'w',encoding='UTF-8')
+            write_file.write(read_file) 
+            print(file)           
 
 if __name__=="__main__":
     os.chdir(os.getcwd()+"/_posts")
     files=glob.glob('*')
     #change_filename(files,"2","a")
-    change_all_file(files,'/',' ',1)
+    change_all_file(files,'windflower','cyberflower')
