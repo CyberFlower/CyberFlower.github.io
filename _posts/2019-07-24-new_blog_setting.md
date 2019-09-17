@@ -29,6 +29,7 @@ ubuntu 18.0.4 환경에서 진행되는 방법입니다.
 ```
 sudo apt-get install ruby-full
 sudo gem install jekyll bundler
+sudo apt install git
 ```
 * 초기 설정 하기(처음 만드는 관리자)
 
