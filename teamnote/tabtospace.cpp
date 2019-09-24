@@ -11,12 +11,14 @@ int main(void)
 		for(int i=len+1;i>=2;i--) name[i]=name[i-2];
 		name[len+2]='\0', name[0]='m', name[1]='_';
 		FILE *out = fopen(name, "w");
-		while(fscanf(in, "%c", &ch) != EOF)
+		while(fscanf(in,"%c",&ch)!= EOF)
 		{
 			if(ch == '\t') fprintf(out,"  ");
 			else fprintf(out,"%c",ch);
 		}
 		printf("Succes\n");
+		fclose(in);
+		fclose(out);
 	}
 	return 0;
 }
