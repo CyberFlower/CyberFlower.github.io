@@ -1,53 +1,70 @@
-#include<bits/stdc++.h>
-using namespace std;
-const int SZ = 2*10005;
-int num[SZ];
-int low[SZ];
-int scc[SZ];
 vector<int> graph[SZ];
-stack<int> s;
-int p,q,n,m;
-void dfs(int x){
-	s.push(x);
-	num[x]=++p;
-	low[x]=p;
-	for(int nxt : graph[x]){
-		if(num[nxt]==0){
-			dfs(nxt);
-			low[x]=min(low[x],low[nxt]);
-		}
-		else if(scc[nxt]==0) low[x]=min(low[x],num[nxt]);
-	}
-	if(num[x]==low[x]){
-		q++;
-		while(!s.empty()){
-			int t = s.top(); s.pop();
-			scc[t]=q;
-			if(t==x) break;
-		}
-	}
+int head[SZ];
+struct Node{
+    ll val; int l, r;
+    Node(){
+        val=0,l=0,r=0;
+    }
+    Node(int l, int r, ll val):l(l),r(r),val(val){
+    }
+};
+vector<Node> pst(2);
+void update(int idx, int il, int ir, int g, ll x){
+    if(g<il || ir<g) return;
+    if(il==ir) return;
+    int m=(il+ir)/2;
+    if(g<=m){
+        int lx=pst[idx].l;
+        pst.pb(Node(pst[lx].l,pst[lx].r,pst[lx].val+x));
+        pst[idx].l=pst.size()-1;
+        update(pst[idx].l,il,m,g,x);
+    }
+    else{
+        int rx=pst[idx].r;
+        pst.pb(Node(pst[rx].l,pst[rx].r,pst[rx].val+x));
+        pst[idx].r=pst.size()-1;
+        update(pst[idx].r,m+1,ir,g,x);
+    }
 }
-int sat(){
-	for(int i=1;i<=n;i++){
-		if(scc[i]==scc[i+n]) return false;
-	}
-	return true;
+ll query(int idx, int il, int ir, int fl, int fr){
+    if(ir<fl || fr<il) return 0;
+    if(fl<=il && ir<=fr) return pst[idx].val;
+    ll res=0;
+    res+=query(pst[idx].l,il,(il+ir)/2,fl,fr);
+    res+=query(pst[idx].r,(il+ir)/2+1,ir,fl,fr);
+    return res;
 }
 int main(void){
-	scanf("%d %d",&n,&m);
-	for(int i=0;i<m;i++){
-		int x,y; scanf("%d %d",&x,&y);
-		graph[x>0?x+n:-x].push_back(y<0?-y+n:y);
-		graph[y>0?y+n:-y].push_back(x<0?-x+n:x);
-	}
-	for(int i=1;i<=2*n;i++){
-		if(num[i]!=0) continue;
-		dfs(i);
-	}
-	if(sat()){
-		printf("1\n");
-		for(int i=1;i<=n;i++) printf("%d ",scc[i]<scc[n+i]);  // true or false 예시 하나 찾는 코드
-	}
-	else printf("0");
-	return 0;
+    ios_base::sync_with_stdio(false); cin.tie(NULL);
+    int t; cin>>t;
+    while(t--){
+        memset(head,0,sizeof(head));
+        for(int i=0;i<SZ;i++) graph[i].clear();
+        pst.clear();
+        pst.resize(2);
+        int n,m; cin>>n>>m;
+        for(int i=0;i<n;i++){
+            int x,y; cin>>x>>y;
+            x++; y++;
+            graph[x].pb(y);
+        }
+        for(int i=1;i<SZ;i++){
+            if(!head[i]){
+                pst.pb(Node(pst[head[i-1]].l,pst[head[i-1]].r,pst[head[i-1]].val));
+                head[i]=pst.size()-1;
+            }
+            for(int y:graph[i]){
+                pst[head[i]].val+=1;
+                update(head[i],1,SZ-1,y,1);
+            }
+        }    
+        ll res=0;
+        for(int i=0;i<m;i++){
+            int lx,rx,by,ty; cin>>lx>>rx>>by>>ty;
+            lx++, rx++, by++, ty++;
+            res+=(query(head[rx],1,SZ-1,by,ty)-query(head[lx-1],1,SZ-1,by,ty));
+        }
+        cout<<res<<'\n';
+    }
+    return 0;
 }
