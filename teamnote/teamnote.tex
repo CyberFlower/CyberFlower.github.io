@@ -1,0 +1,1262 @@
+\documentclass[landscape, 8pt, a4paper, oneside, twocolumn]{extarticle}
+%\documentclass[]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{amsmath}
+\usepackage{pdfpages}
+\usepackage[compact]{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\setlength{\columnseprule}{0.4pt}
+
+%\title{Process Coding! Re:Debug Team's Team Note}
+%\author{Lee Dong Kwan (cyberflower)}
+%\date{\today}
+
+\pagestyle{fancy}
+\lhead{Korea Univ - Process Coding! Re:Debug, author: Lee Dong Kwan, Kim Sang Rae, Park Min Soo}
+\rhead{Page \thepage  \ of \pageref{LastPage} }
+\fancyfoot{}
+
+\begin{document}{
+\large
+%\maketitle
+\tableofcontents
+}
+\pagebreak
+
+\section{Segment Tree}
+\subsection{Lazy propagation}
+\begin{minted}{cpp}
+ll seg[4*SZ];  
+ll lazy[4*SZ];
+void upd_lazy(int idx, int l, int r){
+  seg[idx]+=(ll)(r-l+1)*lazy[idx];
+  if(l!=r){
+    lazy[2*idx]+=lazy[idx];
+    lazy[2*idx+1]+=lazy[idx];
+  }
+  lazy[idx]=0LL;
+}
+void seg_update(int idx, int l, int r, int fl, int fr, ll plus){
+  upd_lazy(idx,l,r);
+  if(r<fl || fr<l) return;
+  if(fl<=l && r<=fr){
+    seg[idx]+=(ll)(r-l+1)*plus;
+    if(l!=r){
+      lazy[2*idx]+=plus;
+      lazy[2*idx+1]+=plus;
+    }
+    return;
+  }
+  seg_update(2*idx,l,(l+r)/2,fl,fr,plus);
+  seg_update(2*idx+1,(l+r)/2+1,r,fl,fr,plus);
+  seg[idx]=seg[2*idx]+seg[2*idx+1];
+}
+ll seg_find(int idx, int l, int r, int fl, int fr){
+  upd_lazy(idx,l,r);
+  if(r<fl || fr<l) return 0LL;
+  if(fl<=l && r<=fr) return seg[idx];
+  return seg_find(2*idx,l,(l+r)/2,fl,fr)+seg_find(2*idx+1,(l+r)/2+1,r,fl,fr);
+}
+\end{minted}
+
+\subsection{Persistent Segment Tree}
+\begin{itemize}
+    \item this code is find the number of point inside rectangle
+    \item rectangle represent as lx,rx,by,ty
+\end{itemize}
+\begin{minted}{cpp}
+vector<int> graph[SZ];
+int head[SZ];
+struct Node{
+  ll val; int l, r;
+  Node():val(0),l(l),r(r){}
+  Node(int l, int r, ll val):l(l),r(r),val(val){}
+};
+vector<Node> pst(2);
+void update(int idx, int il, int ir, int g, ll x){
+  if(g<il || ir<g) return;
+  if(il==ir) return;
+  int m=(il+ir)/2;
+  if(g<=m){
+    int lx=pst[idx].l;
+    pst.pb(Node(pst[lx].l,pst[lx].r,pst[lx].val+x));
+    pst[idx].l=pst.size()-1;
+    update(pst[idx].l,il,m,g,x);
+  }
+  else{
+    int rx=pst[idx].r;
+    pst.pb(Node(pst[rx].l,pst[rx].r,pst[rx].val+x));
+    pst[idx].r=pst.size()-1;
+    update(pst[idx].r,m+1,ir,g,x);
+  }
+}
+ll query(int idx, int il, int ir, int fl, int fr){
+  if(ir<fl || fr<il) return 0;
+  if(fl<=il && ir<=fr) return pst[idx].val;
+  ll res=0;
+  res+=query(pst[idx].l,il,(il+ir)/2,fl,fr);
+  res+=query(pst[idx].r,(il+ir)/2+1,ir,fl,fr);
+  return res;
+}
+int main(void){
+  ios_base::sync_with_stdio(false); cin.tie(NULL);
+  int t; cin>>t;
+  while(t--){
+    memset(head,0,sizeof(head));
+    for(int i=0;i<SZ;i++) graph[i].clear();
+    pst.clear();
+    pst.resize(2);
+    int n,m; cin>>n>>m;
+    for(int i=0;i<n;i++){
+      int x,y; cin>>x>>y;
+      x++; y++;
+      graph[x].pb(y);
+    }
+    for(int i=1;i<SZ;i++){
+      if(!head[i]){
+        pst.pb(Node(pst[head[i-1]].l,pst[head[i-1]].r,pst[head[i-1]].val));
+        head[i]=pst.size()-1;
+      }
+      for(int y:graph[i]){
+        pst[head[i]].val+=1;
+        update(head[i],1,SZ-1,y,1);
+      }
+    }  
+    ll res=0;
+    for(int i=0;i<m;i++){
+      int lx,rx,by,ty; cin>>lx>>rx>>by>>ty;
+      lx++, rx++, by++, ty++;
+      res+=(query(head[rx],1,SZ-1,by,ty)-query(head[lx-1],1,SZ-1,by,ty));
+    }
+    cout<<res<<'\n';
+  }
+  return 0;
+}
+\end{minted}
+
+\subsection{Heavy Light Decomposition(HLD)}
+\begin{minted}{cpp}
+vector<vector<pii>> v,grp;
+int dep[N],par[N],sz[N],lca[N][20],edge[N][2];
+pii id[N];
+struct segtree{
+  int root[N],siz[N],t[N*2],l[N*2],r[N*2],now=0;
+  int construct(vector<pii> &a,int s,int e){
+    int x=now++;
+    if(s==e) t[x]=a[s].ss;
+    else{
+      int mid=(s+e)/2;
+      l[x]=construct(a,s,mid);
+      r[x]=construct(a,mid+1,e);
+      t[x]=max(t[l[x]],t[r[x]]);
+    }
+    return x;
+  }
+  void construct(vector<pii> &a, int k){
+    root[k]=construct(a,0,a.size()-1);
+    siz[k]=a.size();
+  }
+  void update(int s,int e,int x,int p,int vv){
+    if(s==e) t[x]=vv;
+    else{
+      int mid=(s+e)/2;
+      if(p<=mid) update(s,mid,l[x],p,vv);
+      else update(mid+1,e,r[x],p,vv);
+      t[x]=max(t[l[x]],t[r[x]]);
+    }
+  } 
+  void update(int k,int p,int vv){ 
+    update(0,siz[k]-1,root[k],p,vv);
+  }
+  int query(int s,int e,int x,int left, int right){
+    if(left>e||s>right) return 0;
+    if(left<=s&&e<=right) return t[x];
+    int mid=(s+e)/2;
+    return max(query(s,mid,l[x],left,right),query(mid+1,e,r[x],left,right));
+  } 
+  int query(int k,int left,int right) {
+    return query(0,siz[k]-1,root[k],left,right);
+  }
+}t;
+int dfs0(int x, int parent, int hei){
+  dep[x]=hei;
+  par[x]=parent;
+  sz[x]=1;
+  for(auto i:v[x]){
+    if(i.ff!=parent) sz[x]+=dfs0(i.ff,x,hei+1);
+  }
+  return sz[x];
+}
+void dfs(int x, int wei, vector<pii> &a){
+  a.emplace_back(x,wei);
+  int heavy=0,mx=0;
+  for(auto i:v[x]) {if(i.ff!=par[x]&&mx<sz[i.ff]) mx=sz[i.ff],heavy=i.ff;}
+  for(auto i:v[x]){
+    if(i.ff!=par[x]){
+      if(i.ff==heavy) dfs(i.ff,i.ss,a);
+      else{
+        grp.emplace_back();
+        dfs(i.ff,i.ss,grp[grp.size()-1]);
+      }
+    }
+  }
+}
+int LCA(int x,int y){
+  if(dep[x]>dep[y]) return LCA(y,x);
+  for(int i=19,d=dep[y]-dep[x];i>=0;i--) if(d&(1<<i)) y=lca[y][i];
+  for(int i=19;i>=0;i--) if(lca[x][i]!=lca[y][i]) x=lca[x][i],y=lca[y][i];
+  return x==y?x:par[x];
+}
+int down(int x,int p){
+  if(id[x].ff==id[p].ff){
+    return t.query(id[x].ff, id[p].ss+1, id[x].ss);
+  }
+  else{
+    return max(t.query(id[x].ff,0,id[x].ss),down(par[grp[id[x].ff][0].ff],p));
+  }
+}
+int query(int x,int y){
+  int l=LCA(x,y);
+  return max(down(x,l),down(y,l));
+}
+int main(){
+  int n;
+  scanf("%d",&n);
+  v.resize(n+1);
+  for(int i=1;i<n;i++){
+    int x,y,d;
+    scanf("%d %d %d",&x,&y,&d);
+    v[x].push_back({y,d});
+    v[y].push_back({x,d});
+    edge[i][0]=x;
+    edge[i][1]=y;
+  }
+  grp.reserve(N);
+  dfs0(1,1,1);
+  grp.emplace_back();
+  dfs(1,0,grp[0]);
+  for(int i=0;i<grp.size();i++) 
+    for(int j=0;j<grp[i].size();j++) id[grp[i][j].ff]={i,j};
+  for(int i=1;i<=n;i++) lca[i][0]=par[i];
+  for(int j=1;j<20;j++) 
+    for(int i=1;i<=n;i++) lca[i][j]=lca[lca[i][j-1]][j-1];
+  for(int i=0;i<grp.size();i++) t.construct(grp[i],i);
+  int q;scanf("%d",&q);
+  while(q--){
+    int qt,x,y;
+    scanf("%d %d %d",&qt,&x,&y);
+    if(qt==1){
+      int X=edge[x][0],Y=edge[x][1];
+      pii Z=dep[X]<dep[Y]?id[Y]:id[X];
+      t.update(Z.ff,Z.ss,y);
+    }
+    else printf("%d\n",query(x,y));
+  }
+}
+\end{minted}
+
+\section{Graph Theory}
+\subsection{2-SAT, SCC}
+\begin{minted}{cpp}
+const int SZ = 2*10005;
+int num[SZ];
+int low[SZ];
+int scc[SZ];    // scc group
+vector<int> graph[SZ];
+stack<int> s;
+int p,q,n,m;
+void dfs(int x){
+  s.push(x);
+  num[x]=++p;
+  low[x]=p;
+  for(int nxt : graph[x]){
+    if(num[nxt]==0){
+      dfs(nxt);
+      low[x]=min(low[x],low[nxt]);
+    }
+    else if(scc[nxt]==0) low[x]=min(low[x],num[nxt]);
+  }
+  if(num[x]==low[x]){
+    q++;
+    while(!s.empty()){
+      int t = s.top(); s.pop();
+      scc[t]=q;
+      if(t==x) break;
+    }
+  }
+}
+int sat(){
+  for(int i=1;i<=n;i++){
+    if(scc[i]==scc[i+n]) return false;
+  }
+  return true;
+}
+int main(void){
+  cin>>n>>m;
+  for(int i=0;i<m;i++){
+    int x,y; cin>>x>>y;
+    graph[x>0?x+n:-x].push_back(y<0?-y+n:y);
+    graph[y>0?y+n:-y].push_back(x<0?-x+n:x);
+  }
+  for(int i=1;i<=2*n;i++){
+    if(num[i]!=0) continue;
+    dfs(i);
+  }
+  if(sat()){
+    cout<<1<<'\n';
+    for(int i=1;i<=n;i++) cout<<scc[i]<scc[n+i])<<'\n';//tracking true/false
+  }
+  else cout<<0;
+  return 0;
+}
+\end{minted}
+
+\subsection{LCA}
+\begin{minted}{cpp}
+vector<int> graph[SZ]; //tree
+int lv[SZ]; //equal
+int par[MXH][SZ]; //dp for parent
+int vst[SZ]; //equal
+int n; // number of nodes
+void dfs(int x, int parent, int level){
+  vst[x]=1;
+  par[0][x]=parent;
+  lv[x]=level;
+  for(int nxt: graph[x]){
+    if(vst[nxt]==1) continue;
+    dfs(nxt,x,level+1);
+  }
+}
+void memo(){
+  for(int i=1;i<MXH;i++){
+    for(int j=1;j<=n;j++){
+      par[i][j]=par[i-1][par[i-1][j]];
+    }
+  }
+}
+int level_up(int x, int d){ // d is a number for lv up!
+  for(int i=MXH-1;i>=0;i--){
+    if(d&(1<<i)) x=par[i][x];
+  }
+  return x;
+}
+int query(int x, int y){
+  x=level_up(x,max(0,lv[x]-lv[y])); 
+  y=level_up(y,max(0,lv[y]-lv[x]));
+  if(x==y) return x;
+  for(int i=MXH-1;i>=0;i--){
+    if(par[i][x]!=par[i][y]){
+      x=par[i][x];
+      y=par[i][y];
+    }
+  }
+  x=par[0][x];
+  return x;
+}
+\end{minted}
+
+\subsection{Johnson's Algorithm}
+\begin{itemize}
+    \item $ O(V ^ {2} lg V + VE) $ instead of Floyd Warshall
+    \item 1. add new vertex q connected by zero path to any one vertex 
+    \item 2. use Bellman-Ford from q (fill $ dist(q,x) $ and check negative cycle)
+    \item 3. reweight $ edge(u,v) $ to $ edge(u,v) + dist(q,u) - dist(q,v) $
+    \item 4. there're no negative edge, do dijkstra from all vertex(fill $ final(x,y) $)
+    \item 5. real distance from u to v is $ dist(q,v) - dist(q,u) + final(u,v) $    
+\end{itemize}
+
+\section{Flows, Matching}
+\subsection{Flow Common}
+\begin{minted}{cpp}
+struct Edge{
+  int to,rev,cap,cost;
+  Edge(int to, int rev, int cap, int cost):
+  to(to),rev(rev),cap(cap),cost(cost){
+  }
+};
+void push_edge(int a, int b, int capa, int cst){
+  graph[a].pb(Edge(b,graph[b].size(),capa,cst));
+  graph[b].pb(Edge(a,graph[a].size()-1,0,-cst));
+}
+\end{minted}
+
+\subsection{Dinic}
+\begin{minted}{cpp}
+struct Dinic{
+  int n,m,src,dst;
+  vector<vector<edge>> graph;
+  vector<int> crt;
+  vector<int> lv;
+  Dinic(int n, int m, int src, int dst):n(n),m(m),src(src),dst(dst){
+    graph.resize(n+m+5);
+    crt.resize(n+m+5);
+    lv.resize(n+m+5);
+  }
+  bool bfs(){
+    for(int i=0;i<=n+m+1;i++) lv[i]=0;
+    queue<int> q;
+    q.push(src); lv[src]=1;
+    while(!q.empty()){
+      int f=q.front(); q.pop();
+      for(auto nxt:graph[f]){
+        if(lv[nxt.to] || nxt.cap<=0) continue;
+        q.push(nxt.to); lv[nxt.to]=lv[f]+1;
+      }
+    }
+    return lv[dst]!=0;
+  }
+  int dfs(int x, int mnc){
+    if(x==dst) return mnc;
+    for(int &i=crt[x];i<(int)graph[x].size();i++){
+      auto &e=graph[x][i];
+      if(lv[x]>=lv[e.to] || e.cap<=0) continue;
+      int f=dfs(e.to,min(mnc,e.cap));
+      if(f>0){
+        e.cap-=f;
+        graph[e.to][e.rev].cap+=f;
+        return f;
+      }
+    }
+    return 0;
+  }
+  int flow(){
+    int ans=0;
+    while(bfs()){
+      for(int i=0;i<=n+m+1;i++) crt[i]=0;
+      int f;
+      while((f=dfs(src,INF)) > 0) {
+        ans+=f;
+      }
+    }
+    return ans;
+  }
+};
+\end{minted}
+
+\subsection{MCMF}
+\begin{minted}{cpp}
+struct MCMF{
+  vector<vector<Edge>> graph;
+  vector<pii> par;
+  int n,src,snk;
+  MCMF(int n, int src, int snk):n(n),src(src),snk(snk){
+    graph.resize(n+5);
+    par.resize(n+5);
+  }
+  bool SPFA(){
+    vector<int> inq,dst;
+    inq.resize(n+5,0);
+    dst.resize(n+5,INF);    
+    queue<int> q;
+    q.push(src); inq[src]=1; dst[src]=0;
+    while(!q.empty()){
+      int h=q.front(); q.pop();
+      inq[h]=0;
+      for(int i=0;i<(int)graph[h].size();i++){
+        auto e=graph[h][i];
+        if(e.cap<=0) continue;
+        if(dst[h]<INF && dst[e.to]>dst[h]+e.cost){
+          dst[e.to]=dst[h]+e.cost; par[e.to]={h,i};
+          if(inq[e.to]==0){
+            q.push(e.to);
+            inq[e.to]=1;
+          }
+        }
+      }
+    }
+    return dst[snk]!=INF;
+  }
+  pii flow(){
+    int work=0,money=0;
+    while(SPFA()){
+      int c=0, f=INF;
+      for(int i=snk;i!=src;i=par[i].ff){
+        auto &e=graph[par[i].ff][par[i].ss];
+        f=min(f,e.cap);
+        c+=e.cost;
+      }
+      work+=f;
+      money+=f*c;
+      for(int i=snk;i!=src;i=par[i].ff){
+        auto &e=graph[par[i].ff][par[i].ss];
+        e.cap-=f;
+        graph[e.to][e.rev].cap+=f;
+      }
+    }
+    return {work,money};
+  }
+};
+\end{minted}
+
+\section{Geometry}
+\subsection{Geometry}
+\begin{minted}{cpp}
+struct Point{
+  ll x,y;
+  bool operator < (const Point &p) const{
+    return y==p.y?x<p.x:y<p.y;
+  }
+};
+struct Geometry{
+  ll dis(Point a,Point b){
+    return (a.x-b.x)*(a.x-b.x)+(a.y-b.y)*(a.y-b.y);
+  }
+  ll ccw(Point p1,Point p2,Point p3){
+    ll c=(p2.x-p1.x)*(p3.y-p1.y)-(p2.y-p1.y)*(p3.x-p1.x);
+    return c?(c>0?1:-1):0;
+  }
+  bool intersect(Point a,Point b,Point c,Point d){
+    ll ab=ccw(a,b,c)*ccw(a,b,d);
+    ll cd=ccw(c,d,a)*ccw(c,d,b);
+    if(!ab&&!cd){
+      if(b<a) swap(a,b);
+      if(d<c) swap(c,d);
+      return !(b<c||d<a); 
+    }
+    return ab<=0&&cd<=0;
+  }
+  bool inside(Point p,Point *q,int n){
+    int sum=0;
+    for(int i=0;i<n;i++){
+      int j=(i+1)%n;
+      if(intersect(p,p,q[i],q[j])) return true;
+      if((q[i].y>p.y)!=(q[j].y>p.y)){
+        ll l=(p.x-q[i].x)*(q[j].y-q[i].y);
+        ll r=(p.y-q[i].y)*(q[j].x-q[i].x);
+        if(q[i].y>q[j].y) swap(l,r);
+        if(l<r) sum++;
+      }
+    }
+    return sum%2>0;
+  }
+  void convexhull(Point *q,int n,Point *h,int &m){
+    for(int i=0;i<n;i++) if(q[i]<q[0]) swap(q[i],q[0]);
+    sort(q+1,q+n,[&](Point &p1,Point &p2) {
+      ll c=ccw(q[0],p1,p2);
+      return c?c>0:p1<p2;
+    });
+    m=0;
+    for(int i=0;i<n;i++){
+      while(m>=2&&ccw(h[m-2],h[m-1],q[i])<=0) m--;
+      h[m++]=q[i];
+    }
+  }
+  ll diameter(Point *q,int n){
+    int l=0,r=0;
+    while(r<n&&q[r]<q[(r+1)%n]) r++;
+    ll mx=dis(q[l],q[r]);
+    while(r){
+      int dl=(l+1)%n,dr=(r+1)%n;
+      if((q[dl].y-q[l].y)*(q[r].x-q[dr].x)<(q[r].y-q[dr].y)*(q[dl].x-q[l].x)) l=dl;
+      else r=dr;
+      mx=max(mx,dis(q[l],q[r]));
+    }
+    return mx;
+  }
+  ll closest(Point *q,int n){
+    sort(q,q+n,[&](Point &p1,Point &p2){
+      return p1.x<p2.x;
+    });
+    set<Point> s={q[0],q[1]};
+    ll ans=dis(q[0],q[1]);
+    int cur=0;
+    for(int i=2;i<n;i++){
+      while(cur<i){
+        if((q[i].x-q[cur].x)*(q[i].x-q[cur].x)>ans) s.erase(q[cur++]);
+        else break;
+      }
+      ll rt=(ll)sqrt((double)ans)+1;
+      auto low=s.lower_bound({-INF,q[i].y-rt});
+      auto up=s.lower_bound({INF,q[i].y+rt});
+      for(auto it=low;it!=up;it++) ans=min(ans,dis(*it,q[i]));
+      s.insert(q[i]);
+    }
+    return ans;
+  }
+};
+\end{minted}
+
+\subsection{Get Area}
+\begin{minted}{cpp}
+struct Event{
+  ll x,y1,y2;
+  int b;
+};
+int n;
+ll seg[4*SZ],num[4*SZ];
+vector<ll> vi;
+vector<Event> evt;
+int getidx(int x){
+  return lower_bound(vi.begin(),vi.end(),x)-vi.begin();
+}i
+void update(int idx,int l,int r,int st,int en,int x){
+  if(en<l||r<st) return;
+  if(st<=l&&r<=en) num[idx]+=x;
+  else{
+    update(2*idx,l,(l+r)/2,st,en,x);
+    update(2*idx+1,(l+r)/2+1,r,st,en,x);
+  }
+  if(num[idx]) seg[idx]=vi[r+1]-vi[l];
+  else seg[idx]=seg[2*idx]+seg[2*idx+1];
+}
+ll getarea(){
+  sort(evt.begin(),evt.end(),[&](Event &e1,Event &e2){
+    return e1.x<e2.x;
+  });
+  sort(vi.begin(),vi.end());
+  vi.resize(unique(vi.begin(),vi.end())-vi.begin());
+  ll ans=0,last=evt[0].x;
+  for(auto e:evt){
+    ans+=(e.x-last)*seg[1];
+    last=e.x;
+    update(1,0,vi.size()-1,getidx(e.y1),getidx(e.y2)-1,e.b);
+  }
+  return ans;
+}
+\end{minted}
+
+\subsection{Smallest Enclosing Sphere}
+\begin{minted}{cpp}
+#include<bits/stdc++.h>
+using namespace std;
+double dist(double x,double y,double z){
+  return x*x+y*y+z*z;
+}
+double ses(vector<double> x,vector<double> y,vector<double> z){
+  int n=x.size();
+  double nx=0,ny=0,nz=0;
+  for(int i=0;i<n;i++) nx+=x[i],ny+=y[i],nz+=z[i];
+  nx/=n;ny/=n;nz/=n;
+  double maxv,tmp,R=0.1;
+  int maxi;
+  for(int i=0;i<10000;i++){
+    maxv=-1;maxi=-1;
+    for(int j=0;j<n;j++){
+        if(maxv<(tmp=dist(x[j]-nx,y[j]-ny,z[j]-nz))) {
+            maxv=tmp; maxi=j;
+        }
+    }
+    nx+=(x[maxi]-nx)*R; ny+=(y[maxi]-ny)*R; nz+=(z[maxi]-nz)*R;
+    R*=(1-0.002);
+  }
+  return sqrt(maxv);
+}
+\end{minted}
+
+\subsection{Polygon Area, Pick's theorem}
+\begin{minted}{cpp}
+ll gcd(ll x,ll y){
+  return y?gcd(y,x%y):x;
+}
+ll area2(vector<pair<ll,ll>>&A){
+  ll ats = 0;
+  for(int i=2; i<A.size(); i++){
+    ats+=(A[i].ff-A[0].ff)*(A[i-1].ss-A[0].ss);
+    ats-=(A[i].ss-A[0].ss)*(A[i-1].ff-A[0].ff);
+  }
+  return abs(ats);
+}
+ll boundary(vector<pair<ll,ll>>&A){
+  ll ats=A.size();
+  for(int i=0;i<A.size();i++){
+    ll tmp=(i+1==A.size()?0:i+1);
+    ats+=abs(gcd(A[i].ff-A[tmp].ff,A[i].ss-A[tmp].ss))-1;
+  }
+  return ats;
+}
+ll inside(vector<pair<ll,ll>>&A){ //S=I+B/2-1 -> 2*I=2*S+2-B
+  return (area2(A)-boundary(A)+2)/2;
+}
+\end{minted}
+
+\section{DP optimization}
+
+\subsection{Divide and Conquer DP optimization}
+\begin{itemize}
+    \item $O( k n ^ {2} ) \to O( k n lg(n) )$
+    \item Con 1) $ DP[t][i]=min_{k<i}(DP[t-1][k]+C[k][i]) or DP[i]=min_{k<i} B[k]+C[k][i] $
+    \item Con 2) A[t][i]=k that determine C[t][i] then $ A[t][i] \leq A[t][i+1] $ (hard to find)
+    \item Con 2') $ C[a][c]+C[b][d] \leq C[a][d]+C[b][c] $ ($ a \leq b \leq c \leq d $)
+\end{itemize}
+\begin{minted}{cpp}
+int DP[MAXK][MAXN],C[MAXN][MAXN];
+void dc_opt(int t,int s,int e,int l,int r){ // solve DP[t][s~e] on l<=k<=r
+    if(s>e) return;
+    int mid=(s+e)/2;
+    DP[t][mid]=INF;
+    int v,w;
+    for(int k=l;k<=min(r,m-1);k++){
+      if(DP[t][mid]>(v=DP[t-1][k]+C[k][mid])) DP[t][mid]=v,w=k;
+    }
+    dc_opt(t,s,mid-1,l,w);
+    dc_opt(t,mid+1,e,w,r);
+}
+\end{minted}
+
+\subsection{Knuth DP optimization}
+\begin{itemize}
+    \item $O( n ^ {3} ) \to O( n ^ { 2 } )$
+    \item Con 1) $ DP[i][j]=min_{i<k<j}(DP[i][k]+DP[k][j])+C[i][j] $
+    \item Con 2) $ C[a][c]+C[b][d]\leq C[a][d]+C[b][c] (a\leq b \leq c \leq d) $
+    \item Con 3) $ C[b][c] \leq C[a][d] (a \leq b \leq c \leq d) $
+    \item KN[i][j]=k that determining DP[i][j], then $ KN[i][j-1] \leq KN[i][j] \leq KN[i+1][j] $
+\end{itemize}
+\begin{minted}{cpp}
+for(int i=0;i<N;i++) {DP/KN[i][i+1] set}
+for(int d=2;d<=N;d++)for(int i=0;i+d<=N;i++){
+  int j=i+d;
+  DP[i][j]=INF;
+  for(int k=KN[i][j-1];k<=KN[i+1][j];k++){
+    int tmp=DP[i][j] with k
+    if(DP[i][j]>tmp) DP[i][j]=tmp, KN[i][j]=k;
+  }
+}
+\end{minted}
+
+\subsection{Convex Hull Trick}
+\begin{itemize}
+    \item $O ( N Q ) \to O( (N + Q ) lg ( N ) )$
+\end{itemize}
+\begin{minted}{cpp}
+struct line{  // y = a*x + b
+  long long a,b;
+};
+struct cht{ // DP[i]=min(A[i]*B[j]+C[j])+D[i], B[i] is decreasing
+  int s=0,e=0;
+  int idx[1111111];
+  line deq[1111111];
+  double cross(int a,int b){
+    return 1.0*(deq[a].b-deq[b].b)/(deq[b].a-deq[a].a);
+  }
+  void insert(line v,int lidx){
+    deq[e]=v; idx[e]=lidx;
+    while(s+1<e&&cross(e-2,e-1)>cross(e-1,e)){
+        deq[e-1]=deq[e],idx[e-1]=idx[e],e--;
+    }
+    e++;
+  }
+  pair<ll,ll> query(long long x){  // query has increasing x
+    while(s+1<e&&deq[s+1].b-deq[s].b>=x*(deq[s].a-deq[s+1].a)) s++;
+    return pair<ll,ll>(deq[s].a*x+deq[s].b,idx[s]);
+  }
+  pair<ll,ll> query2(long long x){ // normal query
+    int l=0,r=e-1;
+    while(l!=r){
+      int m=(l+r)/2;
+      if(cross(m,m+1)<=x) l=m+1;
+      else r=m;
+    }
+    return pair<ll,ll>(deq[l].a*x+deq[l].b,idx[l]);
+  }
+  void clear(){s=e=0;}
+};
+int main(){
+  cht CHT;
+  CHT.clear();
+  line ins; //set base line
+  CHT.insert(ins,0);
+  for(int i=1;i<=n;i++){
+    dp[i]=CHT.query2(A[i]).first+D[i];
+    ins.a=B[i];
+    ins.b=C[i];
+    CHT.insert(ins,i);
+  } 
+  printf("%lld",dp[n]);
+}
+\end{minted}
+
+\section{Math}
+
+\subsection{Grundy Number}
+\begin{minted}{cpp}
+int grundy_number(state x) {// has no cycle in game, A's goal=B's goal
+  if(gr[x]!=-1) return gr[x];
+  if(x is end_state) return gr[x]=0;
+  priority_queue<int,vector<int>,greater<int>> pq;
+  for(y=next state of x){
+    pq.push_back(grundy_number(y));
+  }
+  int P=0;
+  while(!pq.empty()){
+    if(pq.top()>P+1) return gr[x]=P;
+    P=pq.top(); pq.pop();
+  }
+}//first person wins when bitwise of grundy_numbers of gameboards is not 0
+\end{minted}
+
+\subsection{Matrix}
+\begin{minted}{cpp}
+struct Mat {
+  vector<vector<double> > data;
+  Mat(int n) { data.resize(n, vector<double>(n,0)); }
+  double* operator[] (int idx) {
+    return &data[idx][0];
+  }
+  void swapRow(int i, int j) {
+    if(i==j) return;
+    for(int k=0;k<data.size();k++)
+      swap(data[i][k], data[j][k]);
+  }
+  void setIdentity() {
+    for(int i=0;i<data.size();i++)
+    for(int j=0;j<data.size();j++)
+      if(i==j) data[i][j]=1;
+      else data[i][j]=0;
+  }
+};
+Mat mult(Mat a, Mat b, int sz){
+  Mat c(sz);
+  for(int i=0;i<sz;i++)for(int j=0;j<sz;j++){
+    c[i][j]=0;
+    for(int k=0;k<sz;k++) c[i][j]+=a[i][k]*b[k][j];
+  }
+  return c;
+}
+pair<pair<bool, double> , Mat> inv(Mat aa,int sz){
+  Mat a(sz),b(sz);
+  double K=1;
+  for(int i=0;i<sz;i++)for(int j=0;j<sz;j++) a[i][j]=aa[i][j];
+  b.setIdentity();
+  for(int k=0;k<sz;k++) {
+    int t=k-1;
+    while(t+1<sz && !a[++t][k]);
+    if(t==sz-1 && !a[t][k]) {return {{false,0},a}; }
+    a.swapRow(k,t), b.swapRow(k,t);
+    if(k!=t) K=-K;
+    double d=a[k][k];
+    for(int j=0;j<sz;j++) a[k][j]/=d, b[k][j]/=d, K*=d;
+    for(int i=0;i<sz;i++){
+      if(i!=k) {
+        double m=a[i][k];
+        for(int j=0;j<sz;j++) {
+          if(j>=k) a[i][j]-=a[k][j]*m;
+          b[i][j]-=b[k][j]*m;
+        }
+      }
+    }
+  }
+  return {{true,K},b};
+}
+\end{minted}
+
+\subsection{Karatsuba}
+\begin{minted}{cpp}
+vi multi(vi& A, vi& B){
+  int s1 = A.size(), s2 = B.size(); vi res;
+  res.resize(s1 + s2 - 1, 0);
+  for (int i = 0; i < s1; i++) 
+    for (int j = 0; j < s2; j++) res[i + j] += A[i] * B[j];
+  return res;
+}
+void add(vi& vec1, vi& vec2, int k){    
+  int s = max(vec2.size() + k, vec1.size());
+  vec1.resize(s, 0);  vec2.resize(s, 0);
+  for (int i = 0; i < s - k; i++) vec1[i + k] += vec2[i];
+}
+void sub(vi& vec1, vi& vec2){
+  int s = max(vec1.size(),vec2.size());
+  vec1.resize(s, 0); vec2.resize(s, 0);
+  for (int i = 0; i < s; i++) vec1[i] -= vec2[i];
+}
+vi Karatsuba(vi& A, vi& B){
+  if (A.size() < 50){vi res; res = multi(A,B); return res;}
+  int half = A.size() / 2;
+  if (A.empty() || B.empty()) return vi();
+  vi a1 = vi(A.begin(), A.begin() + half);
+  vi a0 = vi(A.begin() + half, A.end());
+  vi b1 = vi(B.begin(), B.begin() + min(half, B.size()));
+  vi b0 = vi(B.begin() + min(half, B.size()), B.end());
+  vi z0, z1, z2;
+  z0 = Karatsuba(a0, b0); z2 = Karatsuba(a1, b1);
+  add(a0, a1, 0);add(b0, b1, 0);
+  z1 = Karatsuba(a0, b0);
+  sub(z1, z0);sub(z1, z2);
+  vi res;
+  add(res, z2, 0); add(res, z1, half); add(res, z0, half + half);
+  return res;
+}
+\end{minted}
+
+\subsection{Extended GCD}
+\begin{minted}{cpp}
+pair<int,pii> exgcd(int r1, int r2){ // gcd s t
+  if(r1==0||r2==0) return {-1,{0,0}};
+  if(r1>r2) {
+    pair<int,pii> Ans=exgcd(r2,r1);
+    return {Ans.ff,{Ans.ss.ss,Ans.ss.ff}};
+  }
+  int r, q, s, s1=1, s2=0, t, t1=0, t2=1, tmp = r1;
+  while(r2) {
+    q = r1/r2; r = r1%r2;
+    s = s1 - q*s2; t = t1 - q*t2;
+    r1 = r2; r2 = r;
+    s1 = s2; s2 = s;
+    t1 = t2; t2 = t;
+  }
+  return {r1,{s1,t1}};
+}
+pair<bool, pii> crt(pii a, pii b){// a.ff mod a.ss b.ff mod b.ss
+  int g=exgcd(a.ss,b.ss).ff;
+  int l=a.ss/g*b.ss;
+  if((a.ff-b.ff)%g!=0) return {false,{0,0}};
+  int p=exgcd(a.ss,b.ss).ss.ff;
+  p=((long long)p*(b.ff-a.ff))%l;
+  p=(((long long)p*a.ss)+a.ff)%l;
+  return {true,{p,l}};
+}
+\end{minted}
+
+\subsection{FFT}
+\begin{minted}{cpp}
+typedef complex<long double> cp;
+int RB(int v, int bits) {
+  int r = 0;
+  for (int i = 0; i < bits; i++) {
+    r <<= 1;
+    r += (v & 1);
+    v >>= 1;
+  }
+  return r;
+}
+vector<cp> fft(vector<cp> poly, int bits, bool is_inverse) {
+  const double PI = atan(1.0) * 4;
+  double whole = -PI;
+  if (is_inverse) whole = -whole;
+  int n = (1<<bits);
+  for (int i = 0; i < n; i++) {
+     int r = RB(i, bits);
+    if (i < r) swap(poly[i], poly[r]);
+  }
+  for (int step = 1; step < n; step += step) {
+    for (int s = 0; s < n; s += 2*step) {
+      for (int i = 0; i < step; i++) {
+        double rad = whole * i / step;
+        cp t(cos(rad), sin(rad));
+        cp a = poly[s + i] + t * poly[s + i + step];
+        cp b = poly[s + i] - t * poly[s + i + step];
+        poly[s+i] = a;
+        poly[s+i+step] = b;
+      }
+   }
+  }
+  if (is_inverse) {
+    for (int i = 0; i < n; i++) {
+      poly[i] /= n;
+    }
+  }
+  return poly;
+}
+\end{minted}
+
+\subsection{Chinese Remainder Theorem}
+\begin{minted}{cpp}
+pair<int,pii> exgcd(int r1, int r2){ // gcd s t
+  if(r1==0||r2==0) return {-1,{0,0}};
+  if(r1>r2) {
+    pair<int,pii> Ans=exgcd(r2,r1);
+    return {Ans.ff,{Ans.ss.ss,Ans.ss.ff}};
+  }
+  int r, q, s, s1=1, s2=0, t, t1=0, t2=1, tmp = r1;
+  while(r2) {
+    q = r1/r2; r = r1%r2;
+    s = s1 - q*s2; t = t1 - q*t2;
+    r1 = r2; r2 = r;
+    s1 = s2; s2 = s;
+    t1 = t2; t2 = t;
+  }
+  return {r1,{s1,t1}};
+}
+pair<bool, pii> crt(pii a, pii b){// a.ff mod a.ss b.ff mod b.ss
+  int g=exgcd(a.ss,b.ss).ff;
+  int l=a.ss/g*b.ss;
+  if((a.ff-b.ff)%g!=0) return {false,{0,0}};
+  int p=exgcd(a.ss,b.ss).ss.ff;
+  p=((long long)p*(b.ff-a.ff))%l;
+  p=(((long long)p*a.ss)+a.ff)%l;
+  return {true,{p,l}};
+}
+\end{minted}
+
+\subsection{Algebra}
+\begin{itemize}
+    \item 1000th Prime : 7919 
+    \item 5000th Prime : 48611
+    \item 10000th Prime : 104729
+    \item $ 998244353 = 119 \times 2 ^ {23} + 1 $ ( Primitive root : 3 ) 
+    \item primitive root of $ A  \times 2 ^ {C} +1 $ is $ x ^ { 2 ^ {C - 1} } = -1 $
+    \item prime test on $ n : n - 1 = 2 ^ {s} \times d $
+    \item $ a ^ {d} \ne 1 $ and $ a ^ { d2 ^ {t} } \ne -1 $ then n is not prime
+    \item n is int range $ \to a=2,7,61 , n \leq 3.4e17 \to a=2,3,5,7,11,13,17 $
+\end{itemize}
+
+\section{String Matching}
+\subsection{KMP}
+\begin{minted}{cpp}
+string s,p;
+int pi[SZ];
+vector<int> ans;
+void getPi(string p){
+  int m=p.size(),j=0;
+  for(int i=1;i<m;i++){
+    while(j>0&&p[i]!=p[j]) j=pi[j-1];
+    if(p[i]==p[j]) pi[i]=++j;
+  }
+}
+void kmp(string s,string p){
+  getPi(p);
+  int n=s.size(),m=p.size(),j=0;
+  for(int i=0;i<n;i++){
+    while(j>0&&s[i]!=p[j]) j=pi[j-1];
+    if(s[i]==p[j]){
+      j++;
+      if(j==m){
+        ans.push_back(i-m+1);
+        j=pi[j-1];
+      }
+    }
+  }
+}
+\end{minted}
+
+\subsection{Aho-corasick}
+\begin{minted}{cpp}
+struct Ahocorasick{
+  int tot;
+  int trie[SZ][27],output[SZ],fail[SZ];
+  Ahocorasick():tot(0){
+    memset(trie,0,sizeof(trie));
+    memset(output,0,sizeof(output));
+    memset(fail,0,sizeof(fail));
+  }
+  void update(string &s){
+    int p=0;
+    for(auto c:s){
+      if(!trie[p][c-'a']) trie[p][c-'a']=++tot;
+      p=trie[p][c-'a'];
+    }
+    output[p]=1;
+  }
+  void bfs(){
+    queue<int> Q;
+    for(int c=0;c<26;c++)
+      if(trie[0][c]) Q.push(trie[0][c]);
+    while(!Q.empty()){
+      int t,x=Q.front(); Q.pop();
+      for(int i=0;i<26;i++){
+        if(t=trie[x][i]){
+          int p=fail[x];
+          while(p&&!trie[p][i]) p=fail[p];
+          p=trie[p][i];
+          fail[t]=p;
+          if(output[p]) output[t]=1;
+          Q.push(t);
+        }
+      }
+    }
+  }
+  bool find(string &s){
+    int p=0;
+    for(auto c:s){
+      while(p&&!trie[p][c-'a']) p=fail[p];
+      p=trie[p][c-'a'];
+      if(output[p]) return true;
+    }
+    return false;
+  }
+};
+\end{minted}
+
+\subsection{Manacher's Algorithm}
+\begin{minted}{cpp}
+int n,p[SZ]; // Be careful to double the length.
+void manacher(string t) {
+  string s="#";
+  for(int i=0;i<t.size();i++) s+=t[i],s+="#";
+  n=s.size();
+  int r=0,k=0;
+  for(int i=0;i<n;i++) {
+    if(i<=r) p[i]=min(r-i,p[2*k-i]);
+    while(i-p[i]-1>=0&&i+p[i]+1<n&&s[i-p[i]-1]==s[i+p[i]+1]) p[i]++;
+    if(r<i+p[i]) r=i+p[i],k=i;
+  }
+}
+\end{minted}
+
+\subsection{Z algorithm}
+\begin{minted}{cpp}
+int n,p[SZ];
+void z_algorithm(string s) {
+   n=s.size(),p[0]=n-1;
+   int l=-1,r=-1;
+   for(int i=1;i<n;i++) {
+      if(i<=r) p[i]=min(r-i,p[i-l]);
+      else p[i]=-1;
+      while(i+p[i]+1<n&&s[i+p[i]+1]==s[p[i]+1]) p[i]++;
+      if(r<i+p[i]) r=i+p[i],l=i;
+   }
+}
+\end{minted}
+
+\subsection{Suffix Array slow ver}
+\begin{minted}{cpp}
+vector<int> suffix(string &s){
+  int n=s.size();
+  vector<int>sa(n),x(n+1);
+  for(int i=0;i<n;i++) sa[i]=i,x[i]=s[i];
+  x[n]=-1;
+  for(int t=1;t<n;t<<=1){
+    auto cmp=[&](int i, int j){
+      return x[i]==x[j]?x[i+t]<x[j+t]:x[i]<x[j];
+    };
+    sort(sa.begin(),sa.end(),cmp);
+    vector<int> tmp(n+1);
+    tmp[sa[0]]=0; tmp[n]=-1;
+    for(int i=1;i<n;i++) tmp[sa[i]]=tmp[sa[i-1]]+cmp(sa[i-1],sa[i]);
+    x=tmp;
+  }
+  return sa;
+}
+\end{minted}
+
+\subsection{Suffix Array fast ver}
+\begin{minted}{cpp}
+vector<int> suffix(string &s) {
+  int n=s.size(),m=max(257,n+1);
+  vector<int> sa(n),x(n+1),y(n+1);
+  for(int i=0;i<n;i++) sa[i]=i, x[i]=s[i];
+  for(int t=1;t<n;t<<=1) {
+    vector<int> cnt(m);
+    for(int i=0;i<n;i++) cnt[x[min(i+t,n)]]++;
+    for(int i=1;i<m;i++) cnt[i]+=cnt[i-1];
+    for(int i=n-1;i>=0;i--) y[--cnt[x[min(i+t,n)]]]=i;
+    cnt.clear(); cnt.resize(m);
+    for(int i=0;i<n;i++) cnt[x[i]]++;
+    for(int i=1;i<m;i++) cnt[i]+=cnt[i-1];
+    for(int i=n-1;i>=0;i--) sa[--cnt[x[y[i]]]]=y[i];
+    auto cmp=[&](int i,int j){
+      return x[i]==x[j]?x[i+t]<x[j+t]:x[i]<x[j];
+    };
+    vector<int> tmp(n+1);
+    tmp[sa[0]]=1;
+    for(int i=1;i<n;i++) tmp[sa[i]]=tmp[sa[i-1]]+cmp(sa[i-1],sa[i]);
+    x=tmp;
+  }
+  return sa;
+}
+\end{minted}
+
+\subsection{Longest Common Prefix}
+\begin{minted}{cpp}
+vector<int> prefix(string s,vector<int> sa){
+  int i,j,k=0,n=s.size();
+  vector<int> lcp(n),rank(n);
+  for (i=0;i<n;i++) rank[sa[i]] = i;
+  for (i=0;i<n;lcp[rank[i++]]=k)
+    for (k?k--:0,j=rank[i]?sa[rank[i]-1]:-1;s[i+k]==s[j+k];k++);
+  return lcp;
+}
+\end{minted}
+
+\section{E.T.C}
+
+\subsection{Parellel Binary Search}
+\begin{minted}{cpp}
+int n,m,q,lo[N],hi[N],an[N],sz[N],rsz[N],g[N];
+pii qry[N];
+pair<int,pii> edge[N];
+vector<vector<int>> V;
+int find(int x){
+  return x==an[x]?x:an[x]=find(an[x]);
+}
+void merge(int x, int y) {
+  x=find(x),y=find(y);
+  if(x==y)return;
+  an[x]=y;sz[y]+=sz[x];
+}
+int main(){
+  scanf("%d %d",&n,&m);
+  for(int i=1;i<=m;i++){
+    scanf("%d %d %d",&edge[i].ss.ff,&edge[i].ss.ss,&edge[i].ff);
+  }
+  sort(edge+1,edge+m+1); // sort
+  scanf("%d",&q);
+  for(int i=0;i<q;i++){ // lo[i]<=ans<hi[i] offline query
+    scanf("%d %d",&qry[i].ff,&qry[i].ss);
+    lo[i]=1;hi[i]=m+1;
+  }
+  bool f=true;
+  while(f) {// until there're change
+    f=false;
+    for(int i=1;i<=n;i++) an[i]=i,sz[i]=1;
+    V.clear(); V.resize(m+2);
+    for(int i=0;i<q;i++){
+      if(lo[i]<hi[i]) V[(lo[i]+hi[i])/2].push_back(i);
+    }
+    for(int i=1;i<=m;i++){
+      merge(edge[i].ss.ff,edge[i].ss.ss);
+      while(V[i].size()){
+        f=true;
+        int idx=V[i].back();
+        V[i].pop_back();
+        if(find(qry[idx].ff)==find(qry[idx].ss)){
+          hi[idx]=i;
+          g[idx]=edge[i].ff;
+          rsz[idx]=sz[find(qry[idx].ff)];
+        }
+        else lo[idx]=i+1;
+      }
+    }
+  }
+  for(int i=0;i<q;i++){
+    if (lo[i]==m+1) puts("-1");
+    else printf("%d %d\n", g[i], rsz[i]);
+  }
+}
+\end{minted}
+
+\subsection{Fast Input/Output}
+\begin{minted}{cpp}
+struct FastIo{
+   char buf[SZ];
+   int p;
+   FastIo():p(0){}
+   inline char readChar(){
+      if(p==SZ){
+         fread(buf,1,SZ,stdin);
+         p=0;
+      }
+      return buf[p++];	
+   }
+   inline int readInt(){
+      int a=0;
+      char c;
+      bool minu = false;
+      while((c=readChar())!='\n' && c!=' '){
+         if(c!='-'){
+            a *= 10;
+            a += (c&0b1111);	
+         }
+         else if(c=='-') minu=true;
+      }
+      while(buf[p]==' ' || buf[p]=='\n'){
+         p++;
+      }
+      if(minu) return -a;	
+      return a;
+   }
+};
+\end{minted}
+
+\subsection{Random}
+\begin{minted}{cpp}
+random_device rd1;
+seed_seq sseq = {rd1(), rd1(), rd1(), rd1()};
+mt19937 rd2(sseq);
+uniform_int_distribution<int> gen(1, 6); // [1, 6] gen(rd2)
+uniform_real_distribution<double> genr(0.0, 1.0); // [0, 1) genr(rd2)
+\end{minted}
+
+\end{document}
