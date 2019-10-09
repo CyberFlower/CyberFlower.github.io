@@ -314,6 +314,33 @@ int main(void){
 }
 \end{minted}
 
+\subsection{BCC, Seperating Vertex/Edge}
+\begin{minted}{cpp}
+vector<int> graph[SZ], sep_v;
+vector<pii> sep_e;
+int dfn[SZ], low[SZ];
+int piv;
+void dfs(int x, int p){
+	dfn[x] = low[x] = ++piv;
+    int ch=0; bool flg=false;
+	for(int w:graph[x]){
+		if(w == p) continue;
+		if(!dfn[w]){
+            ch++;
+			dfs(w, x);
+			low[x] = min(low[x], low[w]);
+            if(dfn[x]<=low[w]){
+                flg=true;
+                if(dfn[x]<low[w]) sep_e.pb({min(x,w),max(x,w)});
+            }
+		}
+		else if(dfn[x]>dfn[w]) low[x] = min(low[x], dfn[w]);  // back edge
+	}
+    if(!p && ch>=2) sep_v.pb(x);
+    if(p && flg) sep_v.pb(x);
+}
+\end{minted}
+
 \subsection{LCA}
 \begin{minted}{cpp}
 vector<int> graph[SZ]; //tree
@@ -369,6 +396,42 @@ int query(int x, int y){
 \end{itemize}
 
 \section{Flows, Matching}
+
+\subsection{Hungarian Method}
+\begin{minted}{cpp}
+int hungarian(vector<vector<int> > &mat){
+  int n=mat.size(),m=mat[0].size();
+  vector<int> u(n+1),v(m+1),p(m+1),way(m+1),minv(m+1),used(m+1);
+  for(int i=1;i<=n;i++){
+    int j0=0; p[0]=i;
+    for(int j=0;j<=m;j++) minv[j]=INF, used[j]=0;
+    while(1){
+      used[j0]=1;
+      int i0=p[j0],delta=INF,j1;
+      for(int j=1;j<=m;j++){
+        if(used[j]==0){
+          int cur=mat[i0-1][j-1]-u[i0]-v[j];
+          if(cur<minv[j]) minv[j]=cur,way[j]=j0;
+          if(minv[j]<delta) delta=minv[j],j1=j;
+        }
+      }
+      for(int j=0;j<=m;j++){
+        if(used[j]) u[p[j]]+=delta, v[j]-=delta;
+        else minv[j]-=delta;
+      }
+      j0=j1;
+      if(p[j0]==0) break;
+    }
+    while(1){
+      int j1=way[j0];
+      p[j0]=p[j1]; j0=j1;
+      if(!j0) break;
+    }
+  }
+  return -v[0];
+}
+\end{minted}
+
 \subsection{Flow Common}
 \begin{minted}{cpp}
 struct Edge{
@@ -980,6 +1043,50 @@ pair<bool, pii> crt(pii a, pii b){// a.ff mod a.ss b.ff mod b.ss
 }
 \end{minted}
 
+\subsection{Factorize}
+\begin{minted}{cpp}
+bool wit(ull a,ull n,ull s){
+  a%=n;
+  if(a<=1) return true;
+  ull d=n>>s, x=pow(a,d,n); //define pow
+  if(x==1||x==n-1) return true;
+  while(s-- > 1){
+    x=mulmod(x,x,n); //define mulmod
+    if(x==1) return false;
+    if(x==n-1) return true;
+  }
+  return false;
+}
+bool millerRabin(ull n){
+  if(n==2) return true;
+  if(n<2||n%2==0) return false;
+  ull d=n>>1,s=1;
+  for(;(d&1)==0;s++) d>>=1;
+#define Tk(a) wit(a##ull , n, s)
+  if(n<4759123141LL) return Tk(2)&&Tk(7)&&Tk(61);
+  else return Tk(2)&&Tk(325)&&Tk(9375)&&Tk(28178)&&Tk(450775)&&Tk(9780504)&&Tk(1795265022);
+}
+ll rho(ll n){
+  uniform_int_distribution<ll> dis(1,n-1);
+  ll x=dis(rd2),c=dis(rd2),g=1,y=x;//random
+  while(g==1){
+    x=(mulmod(x,x,n)+c)%n;
+    y=(mulmod(y,y,n)+c)%n;
+    y=(mulmod(y,y,n)+c)%n;
+    g=gcd(abs(x-y),n); // define gcd
+  }
+  return g;
+}
+void factorize(ll n, vector<ll>& v){
+  if(n==1) return;
+  if(n%2==0) v.pb(2),factorize(n/2,v);
+  else if(millerRabin(n)) v.pb(n);
+  else{
+    ll f=rho(n);factorize(f,v);factorize(n/f,v);
+  }
+}
+\end{minted}
+
 \subsection{Algebra}
 \begin{itemize}
     \item 1000th Prime : 7919 
@@ -1151,12 +1258,15 @@ vector<int> suffix(string &s) {
 \subsection{Longest Common Prefix}
 \begin{minted}{cpp}
 vector<int> prefix(string s,vector<int> sa){
-  int i,j,k=0,n=s.size();
-  vector<int> lcp(n),rank(n);
-  for (i=0;i<n;i++) rank[sa[i]] = i;
-  for (i=0;i<n;lcp[rank[i++]]=k)
-    for (k?k--:0,j=rank[i]?sa[rank[i]-1]:-1;s[i+k]==s[j+k];k++);
-  return lcp;
+   int k=0,n=s.size();
+    vector<int> lcp(n),rank(n);
+    for(int i=0;i<n;i++) rank[sa[i]]=i;
+    for(int i=0;i<n;i++){
+       if(!rank[i]) continue;
+       while(s[i+k]==s[sa[rank[i]-1]+k]) k++;
+      lcp[rank[i]]=k?k--:0;
+   }
+   return lcp;
 }
 \end{minted}
 
