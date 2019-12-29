@@ -209,25 +209,6 @@ $(document).ready(function(){
     new Search();
 
     /**
-     * Night mode
-     */
-    function nightMode() {
-        var el = $('body');
-        var className = 'night-mode';
-
-        var date = new Date();
-        var hour = date.getHours();
-
-        if (hour <= 6 || hour >= 18) {
-            el.addClass(className);
-        }
-    }
-
-    if ($('#nm-switch').val() === 'true') {
-        nightMode();
-    }
-
-    /**
      * Copy and copyright
      */
     function setClipboardData(str) {
