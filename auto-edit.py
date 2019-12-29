@@ -28,8 +28,8 @@ def change_all_file(files,ori,new,cnt=0):
             print(file)           
 
 if __name__=="__main__":
-    #os.chdir(os.getcwd()+"/_posts")
-    os.chdir(os.getcwd())
+    os.chdir(os.getcwd()+"/_posts")
+    #os.chdir(os.getcwd())
     files=glob.glob('*')
     #change_filename(files,"2","a")
-    change_all_file(files,'windflower','cyberflower')
+    change_all_file(files,'SKH-camp','PS',cnt=2)
