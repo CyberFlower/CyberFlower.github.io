@@ -19,16 +19,21 @@ layout: default
             {% endfor %}
         {% endif %}
         </li>
-        
+
         {% for tag in site.tags %}
         <li>
             <span class="tag-name" id="{{ tag[0] }}">「{{ tag[0] }}」</span>
-            {% for post in tag[1] %}
-            <a class="tag-post" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title }}</a>
-            {% endfor %}
+            <details>
+              <summary> Hide & Open </summary>
+              <li>
+                {% for post in tag[1] %}
+                <a class="tag-post" href="{{ post.url | relative_url }}" title="{{ post.title }}">{{ post.title }}</a>
+                {% endfor %}
+              </li>
+            </details>
         </li>
         {% endfor%}
     </ul>
 </main>
-    
+
 {% include footer.html %}
