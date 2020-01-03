@@ -1,4 +1,4 @@
-### Process Coding! Re:Debug team's algorithm blog
+### Cyberflower's algorithm blog
 ---
 
 #### Member
