@@ -45,5 +45,6 @@ if __name__=="__main__":
     os.chdir(os.getcwd()+"/_posts")
     #os.chdir(os.getcwd())
     files=glob.glob('*')
-    change_all_file(files,"title: codeforces","title: Codeforces", cnt=1)
+    #change_all_file(files,"title: codeforces","title: Codeforces", cnt=1)
+    change_spec_file(files,"icpc","tags: PS","tags: Baekjoon OJ", cnt=1)
     #change_spec_file(files,'cf','PS','Codeforces',cnt=2)
