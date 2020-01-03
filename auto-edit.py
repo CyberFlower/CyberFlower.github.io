@@ -11,7 +11,7 @@ def change_filename(files, ori, new):
         if os.path.isdir(x):
             pass
         else:
-            os.rename(x,x.replace(ori,new,1))    
+            os.rename(x,x.replace(ori,new,1))
 
 # change every file in current directory
 # change every word in contents
@@ -24,8 +24,8 @@ def change_all_file(files,ori,new,cnt=0):
             tmp=re.compile(ori)
             read_file=tmp.sub(new,read_file,cnt)
             write_file=open(file,'w',encoding='UTF-8', errors='ignore')
-            write_file.write(read_file) 
-            print(file)       
+            write_file.write(read_file)
+            print(file)
 
 # change files which consists specific substr in filenames
 # change every word in contents
@@ -38,12 +38,12 @@ def change_spec_file(files,sub_str,ori,new,cnt=0):
             tmp=re.compile(ori)
             read_file=tmp.sub(new,read_file,cnt)
             write_file=open(file,'w',encoding='UTF-8', errors='ignore')
-            write_file.write(read_file) 
-            print(file)    
+            write_file.write(read_file)
+            print(file)
 
 if __name__=="__main__":
     os.chdir(os.getcwd()+"/_posts")
     #os.chdir(os.getcwd())
     files=glob.glob('*')
-    #change_filename(files,"2","a")
-    change_spec_file(files,'cf','PS','Codeforces',cnt=2)
+    change_all_file(files,"title: codeforces","title: Codeforces", cnt=1)
+    #change_spec_file(files,'cf','PS','Codeforces',cnt=2)
