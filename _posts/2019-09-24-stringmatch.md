@@ -209,7 +209,7 @@ void update(string &x){
   int p=0;
   int sz=x.size();
   for(int i=0;i<sz;i++){
-    if(!trie[p][x[i]-'a']) ++tot;
+    if(!trie[p][x[i]-'a']) trie[p][x-'a']=++tot;
     p=trie[p][x-'a'];
   }
   output[p]=true;
