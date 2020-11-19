@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 2020 SCPC 본선 후기
-subtitle: 6회 SCPC 후기
+subtitle: 6회 SCPC 본선 후기
 date: 2020-11-19
 categories: Algorithm
 tags: 후기
@@ -12,7 +12,7 @@ author: cyberflower
 
 ---
 
-삼성 프로그래밍 경시대회(SCPC) 본선에서 수상을 하게 되었습니다. 올해 목표로 했던 2개 대회(나머지 하나는 ICPC)에서 모두 수상을 해서 행복합니다. (5등상 중에 2위 했습니다 :) )
+삼성 프로그래밍 경시대회(SCPC) 본선에서 수상을 하게 되었습니다. 올해 목표로 했던 2개 대회(나머지 하나는 ICPC)에서 모두 수상을 해서 행복합니다. 
 
 ![스코어보드](/img/2020-11-19-scpc_scoreboard.png)
 
