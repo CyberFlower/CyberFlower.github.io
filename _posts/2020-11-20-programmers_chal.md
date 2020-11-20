@@ -6,6 +6,7 @@ date: 2020-11-20
 categories: Algorithm
 tags: 후기
 author: cyberflower
+mathjax: true
 ---
 
 ### 프로그래머스 월간 챌린지 1회 후기
