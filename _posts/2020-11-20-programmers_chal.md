@@ -136,7 +136,9 @@ $ \sum_{s_j \neq s_i}\sum_{d=1}^{d=min(len(s_i),len(s_j))}(d\times (s_i+s_j-(2d-
 
 정렬을 해둔다면, $O(n)$으로 위 식을 깔끔하게 처리할 수 있습니다. 식 전개를 마저 하자면, 
 
-$$ \frac{len(s_i)(len(s_i)+1)}{2}\times \sum_{s_j}^{s_j \neq s_i} (s_j +\frac{len(s_i)(len(s_i)+1)(1-len(s_i))}{6}) $$
+$$ 
+\frac{len(s_i)(len(s_i)+1)}{2}\times \sum_{s_j}^{s_j \neq s_i} (s_j +\frac{len(s_i)(len(s_i)+1)(1-len(s_i))}{6}) 
+$$
 
 이 되기 때문입니다.
 
