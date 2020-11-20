@@ -130,7 +130,9 @@ $ d $가 1인 경우는 $ s_i+s_j-1 $ 이며 일반적인 $ d $에 대하여 $ s
 
 즉, 둘째 케이스의 총합은 
 
-$ \sum_{s_j \neq s_i}\sum_{d=1}^{d=min(len(s_i),len(s_j))}(d\times (s_i+s_j-(2d-1))) $ 
+$$
+\sum_{s_j \neq s_i}\sum_{d=1}^{d=min(len(s_i),len(s_j))}(d\times (s_i+s_j-(2d-1))) 
+$$ 
 
 가 됩니다.
 
