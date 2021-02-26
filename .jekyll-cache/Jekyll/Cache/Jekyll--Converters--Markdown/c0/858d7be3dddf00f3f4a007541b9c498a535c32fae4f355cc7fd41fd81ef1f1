@@ -1,0 +1,92 @@
+I"6E<p><img src="/img/2019-08-07-icpc1761.png" alt="트리" width="200" height="200" /></p>
+
+<p>1번 쿼리 :</p>
+<ul>
+  <li>탐색을 하면서, 루트에서 노드까지 가는 모든 비용을 저장해 둡시다.</li>
+  <li>거리를 구했던 방법과 동일하게 구할 수 있습니다.</li>
+</ul>
+
+<p>2번 쿼리:</p>
+<ul>
+  <li>문제에서 k가 y+z 이하임을 보장하고 있습니다.</li>
+  <li>A에서 B로 가는 경로에서 k번째 노드를 찾는 쿼리를 생각해봅시다.</li>
+  <li>k가 y 이하라면 우리는 A에서 k만큼 레벨업 하면 됩니다.</li>
+  <li>k가 y 이상이라면 우리는 B에서 (y+z-k)만큼 레벨업 하면 됩니다.</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pii</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ll</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span> <span class="o">=</span> <span class="mi">100005</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MXH</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pii</span><span class="o">&gt;</span> <span class="n">graph</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">dp</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span>
+<span class="n">ll</span> <span class="n">dist</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">lv</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">crt</span><span class="p">,</span> <span class="kt">int</span> <span class="n">prt</span><span class="p">,</span> <span class="kt">int</span> <span class="n">level</span><span class="p">,</span> <span class="n">ll</span> <span class="n">dst</span><span class="p">){</span>
+	<span class="n">lv</span><span class="p">[</span><span class="n">crt</span><span class="p">]</span><span class="o">=</span><span class="n">level</span><span class="p">;</span>
+	<span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">crt</span><span class="p">]</span><span class="o">=</span><span class="n">prt</span><span class="p">;</span>
+	<span class="n">dist</span><span class="p">[</span><span class="n">crt</span><span class="p">]</span><span class="o">=</span><span class="n">dst</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">crt</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">l</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">nxt</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">crt</span><span class="p">][</span><span class="n">i</span><span class="p">].</span><span class="n">first</span><span class="p">;</span> <span class="kt">int</span> <span class="n">w</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">crt</span><span class="p">][</span><span class="n">i</span><span class="p">].</span><span class="n">second</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">nxt</span><span class="o">!=</span><span class="n">prt</span><span class="p">)</span> <span class="n">dfs</span><span class="p">(</span><span class="n">nxt</span><span class="p">,</span><span class="n">crt</span><span class="p">,</span><span class="n">level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">dst</span><span class="o">+</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="n">w</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">level_up</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">){</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">MXH</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">((</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="p">)</span><span class="o">&amp;</span><span class="n">k</span><span class="p">)</span> <span class="n">x</span><span class="o">=</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">lca</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">na</span> <span class="o">=</span> <span class="n">level_up</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">max</span><span class="p">(</span><span class="n">lv</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="mi">0</span><span class="p">));</span>
+	<span class="kt">int</span> <span class="n">nb</span> <span class="o">=</span> <span class="n">level_up</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">max</span><span class="p">(</span><span class="n">lv</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">a</span><span class="p">],</span><span class="mi">0</span><span class="p">));</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">na</span><span class="p">]</span><span class="o">!=</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">nb</span><span class="p">]){</span>
+			<span class="n">na</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">na</span><span class="p">];</span>
+			<span class="n">nb</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">nb</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">na</span><span class="o">!=</span><span class="n">nb</span><span class="p">){</span>
+		<span class="n">na</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">na</span><span class="p">];</span>
+		<span class="n">nb</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">nb</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">na</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d %d %d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">make_pair</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">));</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">b</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">make_pair</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="n">dfs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">MXH</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+			<span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">dp</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">m</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">m</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">q</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">q</span><span class="p">);</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+			<span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d %d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">);</span>
+			<span class="kt">int</span> <span class="n">na</span> <span class="o">=</span> <span class="n">lca</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+			<span class="n">printf</span><span class="p">(</span><span class="s">"%lld</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">dist</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">+</span><span class="n">dist</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">dist</span><span class="p">[</span><span class="n">na</span><span class="p">]);</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">q</span><span class="o">==</span><span class="mi">2</span><span class="p">){</span>
+			<span class="kt">int</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">;</span> <span class="n">scanf</span><span class="p">(</span><span class="s">"%d %d %d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
+			<span class="n">c</span><span class="o">--</span><span class="p">;</span>
+			<span class="kt">int</span> <span class="n">na</span> <span class="o">=</span> <span class="n">lca</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">);</span>
+			<span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">lv</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">na</span><span class="p">];</span>
+			<span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">lv</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">na</span><span class="p">];</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">c</span><span class="o">&lt;</span><span class="n">x</span><span class="p">)</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">level_up</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">));</span>
+			<span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">level_up</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="n">x</span><span class="o">-</span><span class="n">c</span><span class="p">));</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

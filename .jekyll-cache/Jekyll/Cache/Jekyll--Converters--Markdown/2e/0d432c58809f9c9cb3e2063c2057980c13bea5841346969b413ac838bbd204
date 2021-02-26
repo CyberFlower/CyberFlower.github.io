@@ -1,0 +1,30 @@
+I"�<p><a href="https://www.acmicpc.net/problem/2302">https://www.acmicpc.net/problem/2302</a></p>
+
+<p>쉬운 DP 문제입니다. x개의 연속된 좌석을 채우는 가지수는 항상 동일하므로 1~40개의 연속된 좌석을 memo 배열에 모두 구해놓고 memo[고정좌석 사이의 좌석수]를 모두 곱해주면 됩니다.</p>
+
+<p>memoization식은 memo[x]=memo[x-1]+memo[x-2] 입니다. 가장 오른쪽에 앉아있는 사람은 현재 자리를 유지하는 경우는 memo[x-1]과 동일하고, 앞으로 한 칸 땡기는 경우 한칸 앞에 있던 사람이 뒤로 가지 않으면 모든 사람이 앉을 수 없기 때문에 둘이 자리를 바꾸는 경우만이 가능하여 memo[x-2]와 동일하기 때문입니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">45</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">memo</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">vip</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">memo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">memo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">vip</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="n">sort</span><span class="p">(</span><span class="n">vip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">vip</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">vip</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">ans</span><span class="o">*=</span><span class="n">memo</span><span class="p">[</span><span class="n">vip</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">vip</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

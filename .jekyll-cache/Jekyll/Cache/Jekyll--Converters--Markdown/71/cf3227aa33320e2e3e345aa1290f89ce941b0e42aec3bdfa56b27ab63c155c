@@ -1,0 +1,75 @@
+I"�)<p><a href="https://www.acmicpc.net/problem/14399">https://www.acmicpc.net/problem/14399</a></p>
+
+<p>10달쯤 전, 제가 알고리즘을 처음 시작했을 때 패기롭게 ‘한 명만 푼 문제’를 풀었었는데 그 문제가 바로 이 문제입니다. 이 문제를 풀고 알고리즘이 재밌다고 느끼게 되었던, 저에게는 매우 의미있는 문제입니다. 각설하고, 문제로 들어가죠.</p>
+
+<p>1 이상의 수에서, 가장 나중에 나오는 알파벳은 “X”입니다. 어떤 수 a+b를 만드는 과정에서 a,b가 나왔다고 생각해 봅시다. X 연산을 수행해도 되고 Y 연산을 수행해도 되지만 사전순으로 앞에 나오는 연산을 하기로 했으므로 X 연산을 수행하는 것이 무조건 이득입니다.</p>
+
+<p>(1은 연산을 할 필요가 없습니다. 예외로 처리 합시다.)</p>
+
+<p>2연산의 과정을 거꾸로 생각해 보면 유클리드 호제법과 매우 닮아 있습니다. 20을 생각해보죠.</p>
+
+<p>원래 과정 : (1,1) - (2,1) - (2,3) - (2,5) - (2,7) - (2,9) - (11,9) - (20,9)</p>
+
+<p>역순 : 20 - (11,9) - (2,9) - (2,7) - (2,5) - (2,3) - (2,1) - (1,1)</p>
+
+<p>20에서 (11,9)로 가는 마지막 연산 X를 제외하면 (11,9)의 유클리드 호제법과 모양이 완전히 일치합니다.</p>
+
+<p>따라서 우리는 유클리드 호제법을 하면서 2연산의 길이를 구할 수 있습니다. (몫의 합)</p>
+
+<p>유클리드 호제법의 시간복잡도가 O(log(n))이므로 가능한 모든 마지막 상태((1,n-1)~(n-1,1))를 다 해보아도 O(nlogn)의 시간복잡도로 가장 짧은 2연산의 길이를 구할 수 있습니다.</p>
+
+<p>유클리드 호제법에서 최대공약수가 1이 아니면 (1,1)로 도달할 수 없기 때문에 최대공약수가 1이 아닌 경우는 제외해도 무방합니다.</p>
+
+<p>나머지는 구현입니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">gcd</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">){</span>
+	<span class="k">return</span> <span class="n">a</span><span class="o">%</span><span class="n">b</span><span class="o">?</span><span class="n">gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">%</span><span class="n">b</span><span class="p">)</span><span class="o">:</span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">myf</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="mi">1</span> <span class="o">||</span> <span class="n">y</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">y</span><span class="p">)</span> <span class="k">return</span> <span class="n">myf</span><span class="p">(</span><span class="n">x</span><span class="o">%</span><span class="n">y</span><span class="p">,</span><span class="n">y</span><span class="p">)</span><span class="o">+</span><span class="n">x</span><span class="o">/</span><span class="n">y</span><span class="p">;</span>
+	<span class="k">else</span> <span class="k">return</span> <span class="n">myf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">%</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">y</span><span class="o">/</span><span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">mn</span><span class="o">=</span><span class="n">n</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ans</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">gcd</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="p">)</span><span class="o">!=</span><span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+		<span class="kt">int</span> <span class="n">xx</span><span class="o">=</span><span class="n">myf</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="p">);</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">mn</span><span class="o">&gt;</span><span class="n">xx</span><span class="p">){</span>
+			<span class="n">mn</span><span class="o">=</span><span class="n">myf</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">i</span><span class="p">);</span>
+			<span class="n">ans</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+			<span class="n">ans</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">mn</span><span class="o">==</span><span class="n">xx</span><span class="p">)</span> <span class="n">ans</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">string</span> <span class="n">mx_s</span><span class="o">=</span><span class="s">""</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">mn</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">mx_s</span><span class="o">+=</span><span class="s">"Y"</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">:</span><span class="n">ans</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="n">n</span><span class="o">-</span><span class="n">x</span><span class="p">;</span>
+		<span class="n">string</span> <span class="n">tmp</span><span class="o">=</span><span class="s">""</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">a</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">b</span><span class="o">==</span><span class="mi">1</span><span class="p">)){</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="p">){</span>
+				<span class="n">a</span><span class="o">-=</span><span class="n">b</span><span class="p">;</span>
+				<span class="n">tmp</span><span class="o">=</span><span class="s">"X"</span><span class="o">+</span><span class="n">tmp</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span><span class="p">{</span>
+				<span class="n">b</span><span class="o">-=</span><span class="n">a</span><span class="p">;</span>
+				<span class="n">tmp</span><span class="o">=</span><span class="s">"Y"</span><span class="o">+</span><span class="n">tmp</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">mx_s</span><span class="o">&gt;</span><span class="n">tmp</span><span class="p">)</span> <span class="n">mx_s</span><span class="o">=</span><span class="n">tmp</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">mx_s</span><span class="o">&lt;&lt;</span><span class="s">"X"</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

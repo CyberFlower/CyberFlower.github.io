@@ -1,0 +1,68 @@
+I"�!<p><a href="https://www.acmicpc.net/problem/1991">https://www.acmicpc.net/problem/1991</a></p>
+
+<p>그래프가 주어질 때 전위, 중위, 후위 탐색을 하는 문제이다.</p>
+
+<p>전위탐색(pre order traversal)</p>
+<ul>
+  <li>루트 노드</li>
+  <li>왼쪽 자식노드를 root로 하는 subtree</li>
+  <li>오른쪽 자식노드를 root로 하는 subtree 순서로 탐색</li>
+</ul>
+
+<p>중위탐색(in order traversal)</p>
+<ul>
+  <li>왼쪽 자식노드를 root로 하는 subtree</li>
+  <li>루트 노드</li>
+  <li>오른쪽 자식노드를 root로 하는 subtree 순서로 탐색</li>
+</ul>
+
+<p>후위탐색(post order traversal)</p>
+<ul>
+  <li>왼쪽 자식노드를 root로 하는 subtree</li>
+  <li>오른쪽 자식노드를 root로 하는 subtree</li>
+  <li>루트 노드 순서로 탐색</li>
+</ul>
+
+<p>수업에서 한번쯤 들어봤을거라 생각한다. 탐색 방법만 안다면 구현은 쉬운 문제이다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">30</span><span class="p">;</span>
+<span class="kt">char</span> <span class="n">parent</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">char</span> <span class="n">ll</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>  <span class="c1">// 왼쪽 자식</span>
+<span class="kt">char</span> <span class="n">rr</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>  <span class="c1">// 오른쪽 자식</span>
+<span class="kt">void</span> <span class="nf">prtravel</span><span class="p">(</span><span class="kt">char</span> <span class="n">node</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span>	<span class="k">return</span><span class="p">;</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span><span class="n">node</span><span class="p">);</span>
+	<span class="n">prtravel</span><span class="p">(</span><span class="n">ll</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+	<span class="n">prtravel</span><span class="p">(</span><span class="n">rr</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">itravel</span><span class="p">(</span><span class="kt">char</span> <span class="n">node</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span>	<span class="k">return</span><span class="p">;</span>
+	<span class="n">itravel</span><span class="p">(</span><span class="n">ll</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span><span class="n">node</span><span class="p">);</span>
+	<span class="n">itravel</span><span class="p">(</span><span class="n">rr</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">potravel</span><span class="p">(</span><span class="kt">char</span> <span class="n">node</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span>	<span class="k">return</span><span class="p">;</span>
+	<span class="n">potravel</span><span class="p">(</span><span class="n">ll</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+	<span class="n">potravel</span><span class="p">(</span><span class="n">rr</span><span class="p">[</span><span class="n">node</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]);</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span><span class="n">node</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">parent</span><span class="p">));</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">ll</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">ll</span><span class="p">));</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">rr</span><span class="p">));</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">char</span> <span class="n">p</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">p</span><span class="o">&gt;&gt;</span><span class="n">l</span><span class="o">&gt;&gt;</span><span class="n">r</span><span class="p">;</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">l</span><span class="o">!=</span><span class="sc">'.'</span><span class="p">)</span>	<span class="n">ll</span><span class="p">[</span><span class="n">p</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]</span><span class="o">=</span><span class="n">l</span><span class="p">,</span><span class="n">parent</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]</span><span class="o">=</span><span class="n">p</span><span class="p">;</span>		
+		<span class="k">if</span><span class="p">(</span><span class="n">r</span><span class="o">!=</span><span class="sc">'.'</span><span class="p">)</span>	<span class="n">rr</span><span class="p">[</span><span class="n">p</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]</span><span class="o">=</span><span class="n">r</span><span class="p">,</span><span class="n">parent</span><span class="p">[</span><span class="n">r</span><span class="o">-</span><span class="sc">'A'</span><span class="p">]</span><span class="o">=</span><span class="n">p</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">prtravel</span><span class="p">(</span><span class="sc">'A'</span><span class="p">);</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="n">itravel</span><span class="p">(</span><span class="sc">'A'</span><span class="p">);</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="n">potravel</span><span class="p">(</span><span class="sc">'A'</span><span class="p">);</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

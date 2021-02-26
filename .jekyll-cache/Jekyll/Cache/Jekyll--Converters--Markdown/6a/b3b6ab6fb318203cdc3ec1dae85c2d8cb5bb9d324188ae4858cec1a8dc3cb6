@@ -1,0 +1,35 @@
+I"X<p><a href="https://www.acmicpc.net/problem/12865">https://www.acmicpc.net/problem/12865</a></p>
+
+<p>간단한 다이나믹 문제입니다.</p>
+
+<p>memo[x][y]에는 1번부터 x번물건 중 일부를 배낭에 넣어 무게가 y(k 이하)인 상황에서 가질 수 있는 가장 큰 가치를 배열에 넣어줍니다.</p>
+
+<p>이때 점화식은</p>
+
+\[( arr[n][i+arr[n].first]=\overset { i\quad \le \quad k-arr[n].first }{ \underset { i=0 }{ MIN }  } (arr[n-1][i]+arr[n].second)\]
+
+\[arr[n][i]=\overset { i\quad \le \quad k }{ \underset { i=0 }{ MIN }  } arr[n-1][i]\]
+
+<p>중 작은 값이 된다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">memo</span><span class="p">[</span><span class="mi">105</span><span class="p">][</span><span class="mi">100005</span><span class="p">];</span> <span class="c1">// memoization</span>
+<span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">arr</span><span class="p">[</span><span class="mi">105</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+  <span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">k</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">first</span><span class="o">&gt;&gt;</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">second</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">k</span><span class="o">-</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">first</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+      <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">+</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">first</span><span class="p">]</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">+</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">first</span><span class="p">],</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">second</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">k</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">k</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">memo</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="n">i</span><span class="p">]);</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">;</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

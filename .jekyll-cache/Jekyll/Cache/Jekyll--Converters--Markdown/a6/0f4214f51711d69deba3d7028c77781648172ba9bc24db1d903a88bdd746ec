@@ -1,0 +1,191 @@
+I"��<p>기본 아이디어는 다음과 같습니다.</p>
+<ol>
+  <li>MST를 찾는다.</li>
+  <li>MST에 포함되지 않는 간선들 중 하나를 추가해본다. 이 간선을 추가함으로써 지울 수 있는 가장 큰 간선을 하나 찾는다.</li>
+  <li>2의 과정을 반복하면서 추가하는 간선과 지우는 간선의 차이가 가장 작은 경우를 찾는다.</li>
+</ol>
+
+<p>1번 과정은 prim 알고리즘을 사용하였습니다. 복잡도는 O(nlog(n))이므로 문제 없습니다.
+(전처리로 한번만 수행합니다.)</p>
+
+<p>LCA를 사용할 수 있다는 아이디어를 떠올리면 2번을 쿼리당 log(n)으로 수행할 수 있음을 깨닫게 됩니다.</p>
+
+<p><img src="/img/2019-08-08-icpc1626-1.png" alt="트리" width="200" height="200" /></p>
+
+<p>MST에 포함되지 않는 간선 AB를 추가하면 지울 수 있는 간선은 AB 경로상에 있는 간선 뿐입니다.</p>
+
+<ol>
+  <li>
+    <p>간선 하나를 추가하면 트리였던 MST에 A,B,LCA를 하는 삼각형(cycle)이 생깁니다. 이걸 다시 트리로 바꾸려면 지울 수 있는 간선은 AB 경로상에 있는 간선입니다.</p>
+  </li>
+  <li>
+    <p>AB 위에 있는 간선 중 어떤 간선을 지워도 괜찮습니다. 왜냐하면 AB가 연결되었으므로 트리의 성질 중 다른 간선과의 연결성을 만족하기 때문입니다.</p>
+  </li>
+</ol>
+
+<p>이제 sparse table에 간선 가중치의 최댓값을 구하면 됩니다 라고 생각했지만…</p>
+
+<p>최소 스패닝 트리보다는 <em>크면서</em> 가장 작은 스패닝 트리라는 조건이 있습니다.</p>
+
+<p>추가하려는 간선과 지우려는 간선의 가중치가 같은 경우라면 처리하기 매우 까다롭겠네요.</p>
+
+<p>따라서 두번째로 큰 가중치를 저장하는 sparse table을 하나 더 만들고, 경로에 두번째로 큰 가중치가 존재하지 않는다면 -1을 넣어줍니다. (경로상에 가중치들이 전부 동일하거나 경로에 간선이 하나인 경우 등등)</p>
+
+<p>추가하려는 간선과 지우려는 간선의 가중치가 다른 경우라면 처음 아이디어대로 하면 됩니다.</p>
+
+<p>같은 경우라면 이제 LCA jump를 하면서 두번째로 큰 가중치, 가장 큰 가중치들을 모두 모아줍니다. 여기서 두번째로 큰 가중치를 찾아야겠죠!</p>
+
+<p>jump를 log(n)번 하고 jump당 2개의 후보가 생기기 때문에 나이브하게 모아서 정렬을 해 주어도</p>
+
+<p>쿼리당 2log(n)log(2log(n)), 즉 log(n)log(log(n)) 만큼 시간이 더 걸리게 됩니다. 이정도는 괜찮겠네요.</p>
+
+<p>3번 과정을 해야죠. m(그래프의 간선 개수)-n(트리의 간선 개수) 만큼 쿼리를 돌리면 됩니다. 최종 시간복잡도는 (m-n)log(n)log(log(n)) 이 됩니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+#define ff first
+#define ss second
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">50005</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MXH</span><span class="o">=</span><span class="mi">20</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">graph</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">tree</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">lv</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">par</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">dst</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span>	<span class="c1">// 가장 큰 가중치를 저장하는 sparse table</span>
+<span class="kt">int</span> <span class="n">dst_2</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span> <span class="c1">// 두번째로 큰 가중치를 저장하는 sparse table</span>
+<span class="kt">int</span> <span class="n">prim_dst</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">vst</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">prim_vst</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">,</span> <span class="kt">int</span> <span class="n">parent</span><span class="p">,</span> <span class="kt">int</span> <span class="n">level</span><span class="p">){</span>
+  <span class="n">vst</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+  <span class="n">par</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">parent</span><span class="p">;</span>
+  <span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">w</span><span class="p">;</span>
+  <span class="n">lv</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">level</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">nxt</span><span class="o">:</span> <span class="n">tree</span><span class="p">[</span><span class="n">x</span><span class="p">]){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">vst</span><span class="p">[</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+    <span class="n">dfs</span><span class="p">(</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">nxt</span><span class="p">.</span><span class="n">ss</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">level</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">bool</span> <span class="nf">myf</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+	<span class="k">return</span> <span class="n">x</span><span class="o">&gt;</span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">second_mx</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">){</span>
+	<span class="n">sort</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="n">myf</span><span class="p">);</span>
+	<span class="k">auto</span> <span class="n">it</span><span class="o">=</span><span class="n">unique</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+	<span class="n">v</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">distance</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">it</span><span class="p">));</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+	<span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">memo</span><span class="p">(){</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">MXH</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+      <span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]];</span>
+      <span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]);</span>
+      <span class="n">dst_2</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">second_mx</span><span class="p">({</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]],</span><span class="n">dst_2</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="n">dst_2</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]]});</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">level_up</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">d</span><span class="p">){</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">d</span><span class="o">&amp;</span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="p">))</span> <span class="n">x</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">lca</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+  <span class="n">x</span><span class="o">=</span><span class="n">level_up</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">lv</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">y</span><span class="p">]));</span>
+  <span class="n">y</span><span class="o">=</span><span class="n">level_up</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">lv</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">x</span><span class="p">]));</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">)</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">!=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">]){</span>
+      <span class="n">x</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+      <span class="n">y</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">x</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+  <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">max_dist</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">u</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">tmp</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">dx</span><span class="o">=</span><span class="n">lv</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+	<span class="kt">int</span> <span class="n">dy</span><span class="o">=</span><span class="n">lv</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">-</span><span class="n">lv</span><span class="p">[</span><span class="n">u</span><span class="p">];</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">dx</span><span class="o">&amp;</span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="p">)){</span>
+			<span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]);</span>
+			<span class="n">tmp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]);</span>
+			<span class="n">tmp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dst_2</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]);</span>
+			<span class="n">x</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">dy</span><span class="o">&amp;</span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="p">)){</span>
+			<span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">]);</span>
+			<span class="n">tmp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">]);</span>
+			<span class="n">tmp</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">dst_2</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">]);</span>
+			<span class="n">y</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">y</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">ans</span><span class="o">!=</span><span class="n">w</span><span class="p">)</span> <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">second_mx</span><span class="p">(</span><span class="n">tmp</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">prim</span><span class="p">(){</span>
+	<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">prim_dst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">INT_MAX</span><span class="p">;</span>
+	<span class="n">priority_queue</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">pq</span><span class="p">;</span>
+	<span class="n">prim_dst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="n">pq</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="o">-</span><span class="n">prim_dst</span><span class="p">[</span><span class="mi">1</span><span class="p">],{</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}});</span>
+	<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">pq</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+		<span class="k">auto</span> <span class="n">t</span><span class="o">=</span><span class="n">pq</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="n">pq</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">prim_dst</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">!=-</span><span class="n">t</span><span class="p">.</span><span class="n">ff</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+		<span class="n">prim_vst</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+		<span class="n">tree</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ss</span><span class="p">,</span><span class="o">-</span><span class="n">t</span><span class="p">.</span><span class="n">ff</span><span class="p">});</span>
+		<span class="n">tree</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ss</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="o">-</span><span class="n">t</span><span class="p">.</span><span class="n">ff</span><span class="p">});</span>
+		<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">nxt</span><span class="o">:</span> <span class="n">graph</span><span class="p">[</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">]){</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">prim_vst</span><span class="p">[</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">prim_dst</span><span class="p">[</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">&gt;</span><span class="n">nxt</span><span class="p">.</span><span class="n">ss</span><span class="p">){</span>
+				<span class="n">prim_dst</span><span class="p">[</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">=</span><span class="n">nxt</span><span class="p">.</span><span class="n">ss</span><span class="p">;</span>
+				<span class="n">pq</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="o">-</span><span class="n">prim_dst</span><span class="p">[</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">],{</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">t</span><span class="p">.</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">}});</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">prim_dst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">INT_MAX</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="n">ans</span><span class="o">+=</span><span class="n">prim_dst</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">memset</span><span class="p">(</span><span class="n">dst_2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">dst_2</span><span class="p">));</span>
+	<span class="kt">int</span> <span class="n">m</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="o">&gt;&gt;</span><span class="n">y</span><span class="o">&gt;&gt;</span><span class="n">z</span><span class="p">;</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">});</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">y</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">x</span><span class="p">,</span><span class="n">z</span><span class="p">});</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">tot</span><span class="o">=</span><span class="n">prim</span><span class="p">();</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">tot</span><span class="o">==-</span><span class="mi">1</span><span class="p">){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">dfs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="n">memo</span><span class="p">();</span>
+	<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="n">INT_MAX</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">x</span><span class="o">:</span><span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">x</span><span class="p">.</span><span class="n">ff</span> <span class="o">||</span> <span class="n">par</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">==</span><span class="n">i</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+			<span class="kt">int</span> <span class="n">md</span><span class="o">=</span><span class="n">max_dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">lca</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">.</span><span class="n">ff</span><span class="p">),</span><span class="n">x</span><span class="p">.</span><span class="n">ss</span><span class="p">);</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">md</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+			<span class="n">ans</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">x</span><span class="p">.</span><span class="n">ss</span><span class="o">-</span><span class="n">md</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">ans</span><span class="o">==</span><span class="n">INT_MAX</span><span class="p">){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">tot</span><span class="o">+</span><span class="n">ans</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

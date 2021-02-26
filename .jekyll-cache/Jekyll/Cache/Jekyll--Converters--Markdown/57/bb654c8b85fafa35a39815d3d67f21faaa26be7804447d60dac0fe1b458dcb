@@ -1,0 +1,75 @@
+I"�/<p><a href="https://www.acmicpc.net/problem/6101">https://www.acmicpc.net/problem/6101</a></p>
+
+<p>간단하지만은 않은 다이나믹 프로그래밍 문제입니다. 저는 먼저 푼 친구가 시간복잡도가 O(n*sqrt(n))으로 풀 수 있다는 것을 알려주었음에도 푸는데 시간이 오래 걸렸어요…</p>
+
+<p>하지만 아이디어에 비해 코드는 간단합니다! 코드를 통해 설명 드리도록 하겠습니다.</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">205</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">memo</span><span class="p">[</span><span class="n">SZ</span><span class="o">*</span><span class="n">SZ</span><span class="p">];</span>	<span class="c1">// memoization of minimum cost</span>
+<span class="kt">int</span> <span class="n">crt_p</span><span class="p">[</span><span class="n">SZ</span><span class="o">*</span><span class="n">SZ</span><span class="p">];</span> 	<span class="c1">// current position of x(or past position)</span>
+<span class="c1">// let 'number of food types'=A</span>
+<span class="kt">int</span> <span class="n">first_p</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span> 	<span class="c1">// first_p[A]=first position become A</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">first_p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">SZ</span><span class="o">*</span><span class="n">SZ</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+		<span class="kt">int</span> <span class="n">nn</span><span class="o">=</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">nn</span><span class="p">;</span><span class="n">j</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">;</span><span class="n">j</span><span class="o">--</span><span class="p">){</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">crt_p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">&lt;</span><span class="n">first_p</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="n">first_p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">first_p</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+		<span class="p">}</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">crt_p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">!=</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">first_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+		<span class="n">crt_p</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">nn</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+			<span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">memo</span><span class="p">[</span><span class="n">first_p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="o">*</span><span class="n">j</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">memo</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<hr />
+
+<p>배열 설명</p>
+
+<p>memo[n]: 1~n번째 염소를 그룹화 하는데 드는 최소 비용</p>
+
+<p>crt_p[n]: 음식 n을 원했던 가장 최근 염소</p>
+
+<p>first_p[n]: 특정 위치 x에서 출발하여 음식 집합의 크기가 n이 되는 가장 숫자가 작은 염소</p>
+
+<hr />
+
+<p>이 풀이의 핵심은</p>
+
+<p>첫째, 존재하는 모든 그룹의 크기가 sqrt(n)보다 작고,</p>
+
+<p>만약 sqrt(n)보다 큰 그룹이 있다면 비용이 반드시 n보다 크게 됩니다! 하나씩 묶는 것보다 비용이 커지게 되죠.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">memo</span><span class="p">[</span><span class="n">first_p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="o">*</span><span class="n">j</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 현재 first_p[j]는 n에서부터 시작하여 집합의 크기가 j가 되는 가장 작은 위치입니다.</span>
+<span class="c1">// first_p만 어떻게 잘 하면 되겠군요.</span>
+</code></pre></div></div>
+
+<p>둘째, first_p 배열을 채우는 데 O(1)의 시간복잡도만이 필요하다는 점입니다.</p>
+
+<p>first_p를 이차원 배열로 정의했다면 first_p[x+1][n]을 first_p[x][n]에 관련된 식으로 나타낼 수 있습니다. 하지만 이를 이차원 배열에 전부 저장할 필요는 없습니다.  first_p[x-1][n],first_p[x-2][n] … 는 사용하지 않기 때문이죠.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="p">(</span><span class="n">crt_p</span><span class="p">[</span><span class="n">new_cow</span><span class="p">]</span><span class="o">&lt;</span><span class="n">first_p</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">])</span> <span class="n">first_p</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">first_p</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">else</span> <span class="n">first_p</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">first_p</span><span class="p">[</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">]</span>
+<span class="c1">//이라는 점화식을</span>
+<span class="k">if</span><span class="p">(</span><span class="n">crt_p</span><span class="p">[</span><span class="n">new_cow</span><span class="p">]</span><span class="o">&lt;</span><span class="n">first_p</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="n">first_p</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">first_p</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1">//한 줄로 고칠 수 있습니다.(지금 보니 2차원 배열로 짜는게 이해하기 더 쉬웠겠네요)</span>
+</code></pre></div></div>
+<p>나머지 코드는 단순 초기화 과정입니다! 끝!!</p>
+
+<hr />
+<h6 id="special-thanks-to-algorithm-provider-miryu-one-of-my-acmicpc-team">special thanks to algorithm provider Miryu, one of my acmicpc team</h6>
+:ET

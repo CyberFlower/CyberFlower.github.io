@@ -1,0 +1,72 @@
+I"�+<p><a href="https://www.acmicpc.net/problem/10747">https://www.acmicpc.net/problem/10747</a></p>
+
+<p>문자열 S에서 문자열 T를 모두 삭제하는 문제입니다. T를 삭제했는데 연결되어 또 T가 나오는 경우에도 고려해야 하기 때문에 조금 까다롭습니다. <a href="https://cyberflower.github.io/2019/09/24/stringmatch.html">문자열 매칭</a> 에서 KMP를 보고 오는 것도 도움이 될 것 같습니다.</p>
+
+<p>제 풀이는 KMP 알고리즘과 거의 일치하지만, 짚더미에서 일치하는 바늘이 나왔을 때 두 포인터가 갖게 되는 값이 조금 달라집니다. match 포인터의 경우 문자열을 붙여나가다가 바늘이 나오면 바늘을 뽑아내고 뽑아낸 문자열에서 가장 마지막 위치가 가졌었던 match 값으로 update해줍니다. 따라서 우리는 추가적으로 match를 저장하는 배열을 하나 더 만들어 주어야 합니다.</p>
+
+<p>begin포인터의 경우 약간의 꼼수를 사용하였습니다. S[begin+match]와 T[match]를 비교하게 되기 때문에 begin+=(tl-match)를 해준다면 실제로는 begin이 저 위치에 있지 않더라도(즉, 폭파된 위치에 begin이 존재하더라도) begin에서부터 tl개의 문자열을 비교하는 것처럼 활동하게 되고 폭파된 위치에서 begin은 비교가 이뤄지지 않아 문제가 없습니다.</p>
+
+<p>코드를 보도록 하겠습니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">1000005</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">pi</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">bomb</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">vst</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="n">string</span> <span class="n">s</span><span class="p">,</span><span class="n">t</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">idx</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">bkmp</span><span class="p">(){</span>
+    <span class="kt">int</span> <span class="n">bgn</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mch</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">tl</span><span class="o">=</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">t</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="o">&lt;</span><span class="n">tl</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">]</span><span class="o">==</span><span class="n">t</span><span class="p">[</span><span class="n">mch</span><span class="p">]){</span>
+            <span class="n">pi</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">]</span><span class="o">=</span><span class="n">mch</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">mch</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">mch</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">bgn</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">else</span><span class="p">{</span>
+                <span class="n">bgn</span><span class="o">+=</span><span class="p">(</span><span class="n">mch</span><span class="o">-</span><span class="n">pi</span><span class="p">[</span><span class="n">mch</span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="n">mch</span><span class="o">=</span><span class="n">pi</span><span class="p">[</span><span class="n">mch</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">kmp</span><span class="p">(){</span>
+    <span class="n">bkmp</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">bgn</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mch</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">sl</span><span class="o">=</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">tl</span><span class="o">=</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">t</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="o">&lt;</span><span class="n">sl</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">vst</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">]){</span>
+            <span class="n">idx</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">);</span>
+            <span class="n">vst</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">mch</span><span class="o">&lt;</span><span class="n">tl</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="p">]</span><span class="o">==</span><span class="n">t</span><span class="p">[</span><span class="n">mch</span><span class="p">]){</span>
+            <span class="n">mch</span><span class="o">++</span><span class="p">;</span>
+            <span class="n">bomb</span><span class="p">[</span><span class="n">bgn</span><span class="o">+</span><span class="n">mch</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">mch</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">mch</span><span class="o">==</span><span class="n">tl</span><span class="p">){</span>
+                <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">tl</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">idx</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+                <span class="n">mch</span><span class="o">=</span><span class="n">idx</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="o">?</span><span class="n">bomb</span><span class="p">[</span><span class="n">idx</span><span class="p">.</span><span class="n">back</span><span class="p">()]</span><span class="o">:</span><span class="mi">0</span><span class="p">;</span>
+                <span class="n">bgn</span><span class="o">+=</span><span class="p">(</span><span class="n">tl</span><span class="o">-</span><span class="n">mch</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">else</span><span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">mch</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">bgn</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">else</span><span class="p">{</span>
+                <span class="n">bgn</span><span class="o">+=</span><span class="p">(</span><span class="n">mch</span><span class="o">-</span><span class="n">pi</span><span class="p">[</span><span class="n">mch</span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="n">mch</span><span class="o">=</span><span class="n">pi</span><span class="p">[</span><span class="n">mch</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">s</span><span class="o">&gt;&gt;</span><span class="n">t</span><span class="p">;</span>
+    <span class="n">kmp</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">xx</span><span class="o">:</span><span class="n">idx</span><span class="p">)</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">s</span><span class="p">[</span><span class="n">xx</span><span class="p">];</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

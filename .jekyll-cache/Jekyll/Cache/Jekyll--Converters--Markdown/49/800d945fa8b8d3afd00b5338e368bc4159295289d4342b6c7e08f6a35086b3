@@ -1,0 +1,107 @@
+I"/F<p><a href="https://www.acmicpc.net/problem/11061">https://www.acmicpc.net/problem/11061</a></p>
+
+<p><img src="/img/2019-07-26-icpc11061-1.png" alt="완전그래프" width="100" height="100" /></p>
+
+<p>위 사진처럼 모든 노드가 하나의 간선으로 연결되어 있는 그래프를 완전 그래프라고 정의한다.</p>
+
+<p>완전그래프 내부 간선의 가중치들이 완전그래프와 연결되어 있는 외부 간선의 가중치보다 모두 작도록 만들 수 있는 완전그래프의 개수를 찾는 문제이다.</p>
+
+<p>대략적인 알고리즘은 다음과 같다.</p>
+
+<ol>
+  <li>
+    <p>가중치가 작은 간선부터 양 쪽 노드를 그룹화 한다. (union-find 알고리즘)</p>
+  </li>
+  <li>
+    <p>그룹화된 간선의 개수(e), 노드의 개수(n)를 확인하여 nC2==e라면 완전그래프이다.</p>
+  </li>
+</ol>
+
+<p>하지만 이러한 알고리즘에서는 가중치가 같은 간선이 여러개일때 처리 순서가 문제가 된다.</p>
+
+<p>가중치가 같은 간선들이 있다면 그 간선들을 모두 그룹화 해준 뒤에 새로 생긴 완전그래프가 있는지 확인해주면 된다. (외부 간선과 내부 간선의 가중치가 같아도 완전그래프가 아니기 때문이다.)</p>
+
+<p>이제 코드를 보자.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+#define ff first
+#define ss second
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">1005</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">par</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>  <span class="c1">// union find 를 위한 부모 저장</span>
+<span class="kt">int</span> <span class="n">ch</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span> <span class="c1">// 완전 그래프 판별용 노드의 개수</span>
+<span class="kt">int</span> <span class="n">ln</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span> <span class="c1">// 완전 그래프 판별용 간선의 개수</span>
+<span class="n">priority_queue</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">pq</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">find</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">par</span><span class="p">[</span><span class="n">x</span><span class="p">])</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">par</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">find</span><span class="p">(</span><span class="n">par</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">merge</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+	<span class="n">x</span><span class="o">=</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="n">y</span><span class="o">=</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">y</span><span class="p">){</span>
+		<span class="n">ln</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">y</span><span class="p">)</span> <span class="n">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+	<span class="n">par</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">=</span><span class="n">x</span><span class="p">;</span>
+	<span class="n">ch</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">+=</span><span class="n">ch</span><span class="p">[</span><span class="n">y</span><span class="p">];</span>
+	<span class="n">ln</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">+=</span><span class="p">(</span><span class="n">ln</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">ch</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">ln</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">bool</span> <span class="nf">isfull</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">){</span>
+	<span class="n">x</span><span class="o">=</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="n">ch</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">b</span><span class="o">=</span><span class="n">ln</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="o">*</span><span class="n">b</span><span class="p">)</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+	<span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">t</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">t</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">--</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+			<span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+			<span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+			<span class="n">ln</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+			<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+				<span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+				<span class="n">pq</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="o">-</span><span class="n">x</span><span class="p">,{</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">}});</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">pq</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+			<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">tv</span><span class="p">;</span>
+			<span class="kt">int</span> <span class="n">tmp</span><span class="o">=</span><span class="n">pq</span><span class="p">.</span><span class="n">top</span><span class="p">().</span><span class="n">ff</span><span class="p">;</span>
+			<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">pq</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">tmp</span><span class="o">==</span><span class="n">pq</span><span class="p">.</span><span class="n">top</span><span class="p">().</span><span class="n">ff</span><span class="p">){</span>
+				<span class="n">tv</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">pq</span><span class="p">.</span><span class="n">top</span><span class="p">());</span> <span class="n">pq</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="p">}</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">tv</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+				<span class="n">merge</span><span class="p">(</span><span class="n">tv</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">tv</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ss</span><span class="p">);</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">isfull</span><span class="p">(</span><span class="n">tv</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">))</span> <span class="n">ans</span><span class="o">++</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span><span class="p">{</span>
+				<span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">chv</span><span class="p">;</span>
+				<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">tv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+					<span class="n">merge</span><span class="p">(</span><span class="n">tv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">tv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ss</span><span class="p">);</span>
+					<span class="n">chv</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">tv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">tv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">.</span><span class="n">ss</span><span class="p">});</span>
+				<span class="p">}</span>
+				<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">chv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+					<span class="n">chv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="n">find</span><span class="p">(</span><span class="n">chv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">),</span><span class="n">find</span><span class="p">(</span><span class="n">chv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">)};</span>
+				<span class="p">}</span>
+				<span class="n">sort</span><span class="p">(</span><span class="n">chv</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">chv</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+				<span class="n">chv</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">distance</span><span class="p">(</span><span class="n">chv</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">unique</span><span class="p">(</span><span class="n">chv</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">chv</span><span class="p">.</span><span class="n">end</span><span class="p">())));</span>
+				<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">chv</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">isfull</span><span class="p">(</span><span class="n">chv</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">))</span> <span class="n">ans</span><span class="o">++</span><span class="p">;</span>
+				<span class="p">}</span>				
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="o">-</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>완전그래프가 된 그래프를 중복해서 세는 일이 없도록 unique(),resize() 함수를 이용하여 중복된 원소를 제거하였다.</p>
+:ET

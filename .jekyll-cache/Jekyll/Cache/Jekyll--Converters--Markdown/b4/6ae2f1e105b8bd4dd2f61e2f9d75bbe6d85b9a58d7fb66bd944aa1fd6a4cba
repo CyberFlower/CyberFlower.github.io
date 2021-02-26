@@ -1,0 +1,84 @@
+I"� <h3 id="convex-hull-trick-algorithm">Convex Hull Trick Algorithm</h3>
+
+<hr />
+
+<p>동아리 알고리즘 세미나에서 후배님이 CVT를 주제로 세미나를 진행하셨고, 덕분에 저도 미루고 미루던 CVT 알고리즘에 대한 글을 정리하게 되었습니다.</p>
+
+<p>DP optimization 중 하나인 Convex Hull Trick에 대하여 알아보겠습니다.</p>
+
+<p>$ DP[i]=MIN(a_j x_i+DP[j]) (1 \leq i \leq i-1) $ 에 해당하는 DP문제가 있을때,</p>
+
+<p>$ a_j $ 가 감소수열이라면 우리는 해당 DP 문제를 O(n) 또는 O(nlogn)으로 해결할 수 있습니다.</p>
+
+<p>(해당 조건이 없다면 $ O(n^2) $ 복잡도가 필요합니다.)</p>
+
+<hr />
+
+<ol>
+  <li>$ x_i $ 가 증가수열 (복잡도 $ O(n) $)</li>
+</ol>
+
+<hr />
+
+<p>우리는 DP[j]를 y 절편으로 하고 $ x_i $ 를 x축, 기울기를 $a_j$으로 하는 2차원 그래프를 생각할 수 있습니다.</p>
+
+<p>가장 작은 값을 구하는 문제이므로 가장 작은 선들을 취한다면 convex hull(볼록 다각형)의 모양을 갖게 됩니다.</p>
+
+<p><img src="/img/2020-05-04-cht_1.png" alt="CHT" /></p>
+
+<p>따라서 우리는 새로운 직선이 추가될때 마다 볼록다각형을 이루는 직선을 O(1)에 저장할 수 있습니다. (절편과 기울기를 덱에 저장하면 됩니다.)</p>
+
+<p>아래 그림과 같은 경우를 생각해봅시다. 1,2,3의 순서로 직선이 생기는데, 직선 2는 MIN을 구하는데 필요가 없고 제거해도 됩니다. (직선 3과 1의 교점이 직선 3과 2의 교점보다 더 왼쪽에 위치하고, 따라서 MIN 선분들에 포함되지 않습니다.) 따라서 이러한 경우에는 pop을 해주면 됩니다.</p>
+
+<p><img src="/img/2020-05-04-cht_2.png" alt="CHT" /></p>
+
+<p>마지막으로, $ x_i $가 증가수열이므로 $ x_i $ 를 찾는 수고를 들일 필요 없습니다.</p>
+
+<p>자세한 구현은 코드를 통해 살펴보도록 하겠습니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CVT</span><span class="p">{</span>
+<span class="nl">private:</span>
+    <span class="n">deque</span><span class="o">&lt;</span><span class="n">pll</span><span class="o">&gt;</span> <span class="n">lne</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">ll</span><span class="o">&gt;</span> <span class="n">memo</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">crs</span><span class="p">(</span><span class="n">pll</span> <span class="n">l1</span><span class="p">,</span> <span class="n">pll</span> <span class="n">l2</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">l2</span><span class="p">.</span><span class="n">second</span><span class="o">-</span><span class="n">l1</span><span class="p">.</span><span class="n">second</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="kt">double</span><span class="p">)(</span><span class="n">l1</span><span class="p">.</span><span class="n">first</span><span class="o">-</span><span class="n">l2</span><span class="p">.</span><span class="n">first</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="nl">public:</span>
+    <span class="n">CVT</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">){</span>
+        <span class="n">memo</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">ll</span> <span class="n">query</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">ll</span> <span class="n">x</span><span class="p">,</span> <span class="n">ll</span> <span class="n">a</span><span class="p">){</span>
+        <span class="c1">// 1. pop edges if range is less than x</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">lne</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">crs</span><span class="p">(</span><span class="n">lne</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">lne</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">&lt;</span><span class="n">x</span><span class="p">){</span>
+            <span class="n">lne</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="c1">// 2. first edge include x by 1</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">lne</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">first</span><span class="o">+</span><span class="n">lne</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">second</span><span class="p">;</span>   
+        <span class="k">else</span> <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>     
+        <span class="c1">// 3. pop edges NOT in convex hull</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">lne</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">crs</span><span class="p">(</span><span class="n">lne</span><span class="p">[</span><span class="n">lne</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">lne</span><span class="p">[</span><span class="n">lne</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span><span class="o">&gt;=</span><span class="n">crs</span><span class="p">(</span><span class="n">lne</span><span class="p">[</span><span class="n">lne</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">],{</span><span class="n">a</span><span class="p">,</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]})){</span>
+            <span class="n">lne</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="c1">// 4. push new line</span>
+        <span class="n">lne</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">a</span><span class="p">,</span><span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">]});</span>
+        <span class="k">return</span> <span class="n">memo</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>        
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>1: x가 증가수열이므로, x보다 작은 range에 있는 convex hull은 볼 필요가 없습니다. 날려줍시다.</p>
+
+<p>3: 새로 들어온 직선으로 인하여 convex hull에서 빠지게 되는 직선들이 존재했습니다. pop해줍시다.</p>
+
+<p>4: 새로 들어온 직선을 push 해줍니다.</p>
+
+<hr />
+
+<ol>
+  <li>$ x_i $ 의 규칙이 없는 경우 ($ O(nlogn) $)</li>
+</ol>
+
+<hr />
+
+<p>$ x_i $가 증가수열이라면 위의 코드를 이용하면 O(1)의 복잡도가 필요하지만, $ x_i $의 규칙을 모른다면 이분탐색으로 해당하는 선분을 찾는 방법 뿐입니다.</p>
+:ET

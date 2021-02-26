@@ -1,0 +1,61 @@
+I"�,<p><a href="https://www.acmicpc.net/problem/17394">https://www.acmicpc.net/problem/17394</a></p>
+
+<p>숭고한 공식 풀이는 <a href="https://drive.google.com/file/d/1XwcQgX81fR_2ULyzXoY1DZ1Y9EsXyu-_/view">여기</a>서 보실 수 있습니다.</p>
+
+<p>탐색 문제입니다. 에라토스테네스의 체를 이용하여 소수 판별 여부를 저장하는 배열을 하나 만들어 두고 구간 안에 있는 소수가 나올 때까지 bfs를 돌리면 됩니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+#define ff first
+#define ss second
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">100005</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">np</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">vst</span><span class="p">[</span><span class="mi">40</span><span class="o">*</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">void</span> <span class="nf">era</span><span class="p">(){</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">SZ</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">np</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">j</span><span class="o">+=</span><span class="n">i</span><span class="p">){</span>
+			<span class="n">np</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">t</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">t</span><span class="p">;</span>
+	<span class="n">era</span><span class="p">();</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">--</span><span class="p">){</span>
+		<span class="n">memset</span><span class="p">(</span><span class="n">vst</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">vst</span><span class="p">));</span>
+		<span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="o">&gt;&gt;</span><span class="n">l</span><span class="o">&gt;&gt;</span><span class="n">r</span><span class="p">;</span>
+		<span class="n">queue</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">q</span><span class="p">;</span>
+		<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">});</span> <span class="n">vst</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+		<span class="kt">bool</span> <span class="n">flg</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+			<span class="k">auto</span> <span class="n">f</span><span class="o">=</span><span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">l</span><span class="o">&lt;=</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span> <span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">&lt;=</span><span class="n">r</span> <span class="o">&amp;&amp;</span> <span class="n">np</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+				<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">f</span><span class="p">.</span><span class="n">ss</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+				<span class="n">flg</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+				<span class="k">break</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+				<span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+				<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">f</span><span class="p">.</span><span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">});</span>
+			<span class="p">}</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+				<span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+				<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="n">f</span><span class="p">.</span><span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">});</span>
+			<span class="p">}</span>			
+			<span class="k">if</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;</span><span class="mi">4</span><span class="o">*</span><span class="n">SZ</span> <span class="o">&amp;&amp;</span> <span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+				<span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+				<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">f</span><span class="p">.</span><span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">});</span>
+			<span class="p">}</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">-</span><span class="mi">1</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+				<span class="n">vst</span><span class="p">[</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+				<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">({</span><span class="n">f</span><span class="p">.</span><span class="n">ff</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">f</span><span class="p">.</span><span class="n">ss</span><span class="o">+</span><span class="mi">1</span><span class="p">});</span>
+			<span class="p">}</span>						
+		<span class="p">}</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">flg</span><span class="p">)</span> <span class="n">cout</span><span class="o">&lt;&lt;-</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

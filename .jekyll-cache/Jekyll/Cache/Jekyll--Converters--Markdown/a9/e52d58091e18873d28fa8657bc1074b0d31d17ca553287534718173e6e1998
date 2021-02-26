@@ -1,0 +1,71 @@
+I"�,<p><a href="https://www.acmicpc.net/problem/14942">https://www.acmicpc.net/problem/14942</a></p>
+
+<p>LCA를 구하는 과정과 매우 유사하기 때문에, LCA를 모르시는 분이라면 <a href="https://cyberflower.github.io/2019/07/22/LCA.html">LCA</a> 를 보고 오시는 것을 추천드립니다.</p>
+
+<p>알고리즘은 다음과 같습니다.</p>
+
+<ol>
+  <li>
+    <p>LCA를 구하는 탐색(dfs) 과정에서 부모 노드만 저장하는 것이 아니라 부모 노드까지 거리도 저장해 줍니다.</p>
+  </li>
+  <li>
+    <p>개미가 자신의 체력을 모두 소진하여 갈 수 있는 노드로 jump 합니다. LCA에서 쿼리를 구하는 방식으로 점프하면 log(n)만에 점프할 수 있습니다.</p>
+  </li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define ff first
+#define ss second
+</span><span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">100005</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MXH</span><span class="o">=</span><span class="mi">18</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pii</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">pii</span><span class="o">&gt;</span> <span class="n">graph</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">par</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">dst</span><span class="p">[</span><span class="n">MXH</span><span class="p">][</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">level</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">pw</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">,</span> <span class="kt">int</span> <span class="n">lv</span><span class="p">){</span>
+	<span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">w</span><span class="p">;</span>
+	<span class="n">par</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">p</span><span class="p">;</span>
+	<span class="n">level</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">lv</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">nxt</span><span class="o">:</span><span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">]){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="o">==</span><span class="n">p</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+		<span class="n">dfs</span><span class="p">(</span><span class="n">nxt</span><span class="p">.</span><span class="n">ff</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">nxt</span><span class="p">.</span><span class="n">ss</span><span class="p">,</span><span class="n">lv</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">memo</span><span class="p">(){</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">MXH</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+			<span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]];</span>
+			<span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">lca</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">){</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">MXH</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">w</span><span class="o">&gt;=</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
+			<span class="n">w</span><span class="o">-=</span><span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+			<span class="n">x</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">pw</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="o">&gt;&gt;</span><span class="n">y</span><span class="o">&gt;&gt;</span><span class="n">z</span><span class="p">;</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">});</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">y</span><span class="p">].</span><span class="n">push_back</span><span class="p">({</span><span class="n">x</span><span class="p">,</span><span class="n">z</span><span class="p">});</span>
+	<span class="p">}</span>
+	<span class="n">dfs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="n">memo</span><span class="p">();</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">lca</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pw</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

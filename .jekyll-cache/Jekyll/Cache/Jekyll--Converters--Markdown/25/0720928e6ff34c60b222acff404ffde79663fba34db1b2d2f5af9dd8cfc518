@@ -1,0 +1,47 @@
+I")<p><a href="https://www.acmicpc.net/problem/4256">https://www.acmicpc.net/problem/4256</a></p>
+
+<p>트리를 전위 탐색, 후위 탐색한 결과를 알려주고 트리의 후위 탐색 결과를 알아내는 문제이다.</p>
+
+<p>전위,중위,후위 탐색이 궁금하다면 아래 글에서 코드를 보고 오자.</p>
+
+<p><a href="https://cyberflower.github.io/2019/08/02/icpc1991.html">트리 탐색</a></p>
+
+<p>2진트리의 경우 전위,중위 결과를 알거나 중위,후위 결과를 알면 트리의 모양을 하나로 단정지을수 있다. 문제의 상황처럼 전위, 중위 결과를 안다고 가정하자.</p>
+
+<p>전위 탐색: root, left sub-tree, right sub-tree
+후위 탐색: left sub-tree, root, right sub-tree</p>
+
+<p>따라서 우리는 전위 탐색에서 root를 구할 수 있고, 후위 탐색에서 root를 기준으로 left sub-tree 와 right sub-tree의 구간을 구할 수 있다.</p>
+
+<p>단, 전위 탐색에서의 sub-tree와 중위 탐색에서의 sub-tree는 같은 sub-tree여도 탐색이 다르므로 순서가 다를 수 있다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">1005</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">pre</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">in</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">void</span> <span class="nf">tra</span><span class="p">(</span><span class="kt">int</span> <span class="n">p1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p2</span><span class="p">,</span> <span class="kt">int</span> <span class="n">q1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">q2</span><span class="p">){</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">p1</span><span class="o">&gt;</span><span class="n">p2</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">left_num</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">q1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">q2</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">in</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">pre</span><span class="p">[</span><span class="n">p1</span><span class="p">])</span> <span class="k">break</span><span class="p">;</span>
+		<span class="n">left_num</span><span class="o">++</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">tra</span><span class="p">(</span><span class="n">p1</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p1</span><span class="o">+</span><span class="n">left_num</span><span class="p">,</span><span class="n">q1</span><span class="p">,</span><span class="n">q1</span><span class="o">+</span><span class="n">left_num</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">tra</span><span class="p">(</span><span class="n">p1</span><span class="o">+</span><span class="n">left_num</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">q1</span><span class="o">+</span><span class="n">left_num</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">q2</span><span class="p">);</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">pre</span><span class="p">[</span><span class="n">p1</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="s">" "</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">t</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">t</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">t</span><span class="o">--</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">pre</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">in</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="n">tra</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

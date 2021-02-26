@@ -1,0 +1,67 @@
+I"�&<p><a href="https://www.acmicpc.net/problem/1557">https://www.acmicpc.net/problem/1557</a></p>
+
+<p>1이 아닌 어떤 제곱수로도 나누어 떨어지지 않는 수를 제곱 ㄴㄴ수라 할때, k번째 제곱 ㄴㄴ수를 찾는 문제입니다.</p>
+
+<p>k번째 제곱 ㄴㄴ수를 찾는 것은 어려우므로, x이하의 제곱 ㄴㄴ수의 개수 f(x)를 구하겠습니다. 이를 구할 수 있으면 k번째 제곱 ㄴㄴ수를 쉽게 구할 수 있습니다. k-f(k)값이 0이 될때까지 k를 k-f(k)만큼 늘리는 과정을 반복하면 됩니다.</p>
+
+<p>이제 f(x)를 구하면 됩니다. 어떤 수가 제곱 ㄴㄴ수인지 하나씩 세어보는것은 비효율적입니다. 따라서 제곱수의 배수들의 개수를 구하여 x에서 빼주는 방식으로 구하겠습니다.</p>
+
+<p>제곱수의 배수들의 개수는 x이하의 모든 제곱수에 대하여 포함 배제의 원리를 이용하여 구할 수 있습니다. 예시를 들어 설명하면 다음과 같습니다.</p>
+
+<ol>
+  <li>$ {2^{2}} $의 배수들의 개수를 더해줍니다.</li>
+  <li>$ {3^{2}} $의 배수들의 개수를 더해줍니다.</li>
+  <li>$ {4^{2}} $은 $ {2^{2}} $에서 이미 계산되었으므로 넘어갑니다.</li>
+  <li>$ {5^{2}} $의 배수들의 개수를 더해줍니다.</li>
+  <li>$ {6^{2}} $은 $ {2^{2}} $와 $ {3^{2}} $에서 두 번 더해졌으므로 배수들의 개수를 빼줍니다.</li>
+  <li>$ {8^{2}} $,$ {9^{2}} $,$ {12^{2}} $등은 $ {2^{2}} $나 $ {3^{2}} $에서 이미 계산되었으므로 넘어갑니다.</li>
+  <li>$ {10^{2}} $,$ {14^{2}} $,$ {15^{2}} $등은 $ {2^{2}} $과 $ {5^{2}} $,$ {2^{2}} $과 $ {7^{2}} $,$ {3^{2}} $과 $ {5^{2}} $에서 두번 더해졌으므로 각각의 배수들의 개수를 빼줍니다.</li>
+  <li>$ {30^{2}} $은 $ {2^{2}} $,$ {3^{2}} $,$ {5^{2}} $에서 더해지고 $ {6^{2}} $,$ {10^{2}} $,$ {15^{2}} $에서 빼졌으므로 배수들의 개수를 더해줍니다.</li>
+  <li>…</li>
+</ol>
+
+<p>즉, x보다 작은 제곱수 $ {y^{2}} $ 에 대하여 y를 소인수분해했을 때 어떤 소인수의 지수가 2 이상이라면 제외, 모두 1이라면 소인수의 개수에 따라 홀수라면 더해주고 짝수라면 빼주면 됩니다. 이 과정을 x이하의 모든 제곱수에 대하여 계산해주면 x이하의 제곱수의 배수들의 개수를 구할 수 있습니다.</p>
+
+<p>소인수의 개수를 구하는 것은 에라토스테네스의 체를 이용합니다. 소수를 구하는 과정에서 소인수의 개수를 저장시킬 수 있습니다. 소수를 찾았다면, 그 소수를 포함한 소수의 배수들에 대하여 p[i]값을 1 증가시켜줍니다. 이는 해당 수들이 구한 소수를 소인수로 가진다는 것을 나타냅니다. 그 수가 구한 소수의 제곱으로 나누어 떨어진다면 충분히 작은 음수 값을 대입합니다. 이는 해당 수를 제외시키기 위함입니다.</p>
+
+<p>이 과정을 끝내면 p[i]에는 소수의 제곱으로 나누어 떨어지는 경우 어떤 음수가, 아니라면 소인수의 개수가 저장됩니다. 이제 p[i]값이 0보다 큰 i에 대하여, 즉, 제외되지 않은 수들에 대하여 p[i]가 홀수라면 +1을, 짝수라면 -1을 i*i에 곱하여 s[i]에 저장합니다.</p>
+
+<p>x이하의 제곱 ㄴㄴ수의 개수 f(x)는 k이하인 s[i]에 대하여 x/s[i]를 모두 더해주면 됩니다. k번째 제곱 ㄴㄴ수는 위에서 설명했듯 k가 f(k)와 같을때까지 k를 (k-f(k))만큼 증가시켜주는 과정을 반복하여 구할 수 있습니다.</p>
+
+<p>주의할 점은 k가 증가하면서 10억 범위를 넘어가기 때문에 최대 사이즈를 32000보다 적당히 큰 수로 잡아야 한다는 것입니다. 저는 사이즈를 적당히 크게 잡고 k에 10억을 대입한 뒤 해당 수의 제곱근을 구하여(=40557.xxx) 해당 수보다 조금 큰 수를 사이즈로 사용하였습니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;stdio.h&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">40559</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">k</span><span class="p">,</span><span class="n">len</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">p</span><span class="p">[</span><span class="n">SZ</span><span class="p">],</span><span class="n">s</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">ret</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">)</span>	<span class="n">ret</span><span class="o">+=</span><span class="n">x</span><span class="o">/</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
+	<span class="k">return</span> <span class="n">x</span><span class="o">-</span><span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">scanf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">k</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">continue</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">j</span><span class="o">+=</span><span class="n">i</span><span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">j</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=-</span><span class="n">SZ</span><span class="p">;</span>
+			<span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">SZ</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="n">s</span><span class="p">[</span><span class="n">len</span><span class="o">++</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">%</span><span class="mi">2</span><span class="o">?</span><span class="mi">1</span><span class="o">:-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="p">;</span>
+
+	<span class="kt">int</span> <span class="n">ans</span><span class="o">=</span><span class="n">k</span><span class="p">,</span><span class="n">sum</span><span class="o">=-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="n">sum</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">sum</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="n">ans</span><span class="p">);</span>
+		<span class="n">ans</span><span class="o">+=</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="n">sum</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"%d"</span><span class="p">,</span><span class="n">ans</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

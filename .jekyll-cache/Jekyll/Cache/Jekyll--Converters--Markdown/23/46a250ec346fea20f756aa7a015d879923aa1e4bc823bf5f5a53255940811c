@@ -1,0 +1,35 @@
+I"�<p><a href="https://www.acmicpc.net/problem/11068">https://www.acmicpc.net/problem/11068</a></p>
+
+<p>시간복잡도가 타이트하지는 않아 Python으로 코드를 작성하였다.</p>
+
+<p>수를 n진법 수와 비슷한 n진법 리스트로 바꾸어 회문인지 체크한다.</p>
+
+<p>base64로 바꾸어 풀어도 되겠지만, 굳이 구현이 어려운 길을 택하지는 않았다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">pali</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="k">def</span> <span class="nf">chk</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+    <span class="n">s</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">while</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="o">%</span><span class="n">b</span><span class="p">)</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">//</span><span class="n">b</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">def</span> <span class="nf">myf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">65</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pali</span><span class="p">(</span><span class="n">chk</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">t</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="n">x</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">myf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+:ET

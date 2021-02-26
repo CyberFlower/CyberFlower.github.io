@@ -66,10 +66,10 @@ lsi: false
 excerpt_separator: "\n\n"
 incremental: false
 
-#filter: kramdown
-#syntax_highlighter: rouge
-#syntax_highlighter_opts: {span: {line_numbers: false}, block: {line_numbers: true}}
-#filter: colorize_syntax, :default_colorizer => :rouge
+filter: kramdown
+syntax_highlighter: rouge
+syntax_highlighter_opts: {span: {line_numbers: false}, block: {line_numbers: true}}
+filter: colorize_syntax, :default_colorizer => :rouge
 
 # RSS
 RSS: false

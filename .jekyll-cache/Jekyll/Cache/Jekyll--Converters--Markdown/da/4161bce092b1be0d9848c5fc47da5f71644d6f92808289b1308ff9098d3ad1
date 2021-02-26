@@ -1,0 +1,37 @@
+I"�<p><a href="https://www.acmicpc.net/problem/17293">https://www.acmicpc.net/problem/17293</a></p>
+
+<p>재미있는 입출력 문제입니다. 설명은 딱히…</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print1</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"1 bottle of beer on the wall, 1 bottle of beer."</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"No more bottles of beer on the wall, no more bottles of beer."</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s"> bottles of beer on the wall, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s"> bottles of beer."</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">print2</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Take one down and pass it around, no more bottles of beer on the wall."</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Take one down and pass it around, 1 bottle of beer on the wall."</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Take one down and pass it around, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s"> bottles of beer on the wall."</span><span class="p">)</span>
+
+<span class="n">n</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+<span class="n">nn</span><span class="o">=</span><span class="n">n</span>
+<span class="k">while</span> <span class="n">nn</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">:</span>
+    <span class="n">print1</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nn</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"Go to the store and buy some more, 1 bottle of beer on the wall."</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Go to the store and buy some more, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s"> bottles of beer on the wall."</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">print2</span><span class="p">(</span><span class="n">nn</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">nn</span><span class="o">-=</span><span class="mi">1</span>
+    <span class="k">print</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>간만에 파이썬으로 짰습니다. 제 코드보다 깔끔한 코드가 매우 많을 듯 하네요…ㅎㅎ</p>
+:ET

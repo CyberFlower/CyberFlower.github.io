@@ -19,9 +19,15 @@
     <link rel="stylesheet" href="{{ "/assets/css/app.min.css" | relative_url }}">
     <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-	<!--
+    
+    <!--
     {% if site.mathjax %}
-	{% endif %}
+    {% include mathjax_support.html %}
+    {% endif %}
+    
+    <script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-MML-AM_CHTML">
+	</script>  
     -->
     {% include mathjax_support.html %}
     {% include anchor.html %}

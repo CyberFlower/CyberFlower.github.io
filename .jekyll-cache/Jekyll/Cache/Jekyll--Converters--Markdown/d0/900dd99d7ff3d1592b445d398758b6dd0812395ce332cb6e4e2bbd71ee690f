@@ -1,0 +1,143 @@
+I"�\<h4 id="1-mcmf-알고리즘이란">1. MCMF 알고리즘이란?</h4>
+<hr />
+<p>Dinic이 Network Flow 알고리즘의 첫번째 꽃이였다면 MCMF 알고리즘은 Network Flow 알고리즘의 마지막 꽃이라고 할 수 있습니다. 그렇다면 MCMF가 무엇일까요? 일단 MCMF는 Minimum Cost Maximum Flow의 약자입니다. 한글로 풀어서 설명하자면, 가장 많은 유량을 보낼 수 있는 경우 중에서 비용이 가장 싼 것을 찾는 문제에요.</p>
+
+<p>Source에서 Synk로 물을 흘린다고 가정합시다. 다른 플로우 문제와 마찬가지로 Source와 Synk 사이에는 여러개의 노드와 간선이 있습니다. 하지만 간선에 물을 흘리기 위해서는 우리는 돈을 지불해야 합니다.</p>
+
+<p>F.F와 E.K를 공부할때 역간선(잔여용량)에 대해 공부했던 것이 기억나시나요? 우리는 통행료에 대해서도 역간선을 고려해줄 필요가 있습니다. 물을 흘려야 하나? 라고 생각해서 돈을 냈는데 만약 물을 흘리지 않는 것이 최선이라면 돈을 돌려줘야 되기 때문이죠. 따라서 우리는 역간선에 -c(c는 간선의 통행료)에 해당하는 통행료를 매길 필요가 있습니다.</p>
+
+<p>(잔여용량의 경우 처음에는 (capacity,0)으로 설정되어 있다가 f의 flow가 흐르면 (capacity-f,f)로 바뀝니다. 하지만 통행료의 경우에는 늘어나거나 줄어들 필요가 없이 (fee,-fee)로 일정함에 유의합시다.)</p>
+
+<p>MCMF 알고리즘의 개관에 대하여 설명하겠습니다.</p>
+<ol>
+  <li>가장 싸게 Synk로 도착할 수 있는 최단경로를 찾습니다.</li>
+  <li>1에서 찾은 최단경로로 물을 흘려보냅니다.</li>
+  <li>Synk로 물이 가지 못할때 까지 1,2를 반복합니다.</li>
+</ol>
+
+<p>1번 과정에서 최단경로를 찾는 알고리즘은 무엇이 있을까요? 다익스트라? 벨만 포드? 일단 다익스트라는 땡입니다. 음의 통행료가 있기 때문이죠. 그렇다고 벨만 포드를 쓰기에는 너무 느립니다. 이제 SPFA(Shortest Path Fastest Algorithm)을 배울 차례입니다.</p>
+
+<hr />
+<h4 id="2-spfa-알고리즘-shortest-path-fastest-algorithm">2. SPFA 알고리즘 (Shortest Path Fastest Algorithm)</h4>
+<hr />
+
+<p>벨만포드의 성능을 향상시킨 알고리즘입니다. 음수 사이클이 존재할 경우(최악의 경우) 시간복잡도는 O(VE)로 벨만포드와 동일하지만 음수 사이클이 존재하지 않는 경우 시간복잡도가 O(V+E)가 되어 시간복잡도가 좋아집니다.</p>
+
+<p>후에 설명할 MCMF에서 SPFA 알고리즘을 사용하게 되는데, MCMF알고리즘에서 음수 간선은 존재하지만 음수 사이클은 존재하지 않기 때문입니다. 간단한 증명을 보고 가겠습니다.</p>
+
+<p><img src="/img/2019-09-10-mcmf-1.png" alt="SPFA" /></p>
+
+<p>a+b&gt;c 라고 해봅시다. c가 최단경로이기 때문에 c로 물이 흐르고, -c의 역간선이 생기게 됩니다. 하지만 a+b-c&gt;0이기 때문에 사이클은 여전히 음수가 아닙니다.</p>
+
+<p>이제 SPFA 알고리즘의 개관을 보도록 하겠습니다.</p>
+
+<ol>
+  <li>dist 배열을 INF(무한대)로 초기화합니다.</li>
+  <li>시작 노드의 거리를 0으로 한 후 큐에 넣어줍니다.</li>
+  <li>큐의 첫번째 원소와 인접한 모든 노드들에 대하여 거리를 비교합니다.
+3-1. 만약 거리가 줄어들었다면, 인접한 노드를 큐에 넣고 거리를 업데이트 해줍니다.
+3-2. 큐에 들어있지 않은 원소가 update되었다면 큐에 넣어줍니다.
+3-3. 현재 사용한 최단경로를 나중에 추적할 수 있도록 부모 노드에 대한 정보도 업데이트 해줍니다.</li>
+</ol>
+
+<hr />
+<h4 id="3-mcmf-알고리즘">3. MCMF 알고리즘</h4>
+<hr />
+
+<p>MCMF 알고리즘 개관을 보도록 하겠습니다.</p>
+
+<ol>
+  <li>SPFA 알고리즘을 돌립니다. synk까지 가는 경로가 존재한다면,</li>
+  <li>1에서 찾은 경로를 재탐색하면서 flow를 흘리고 비용을 구합니다.</li>
+  <li>현재까지 필요한 총 액수를 누적시킵니다.</li>
+  <li>1에서 synk까지 가는 경로가 존재하지 않을때까지 1,2,3을 반복합니다.</li>
+</ol>
+
+<p>대표적인 MCMF 문제인 <a href="https://www.acmicpc.net/problem/11408">열혈강호5</a> 문제입니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+#define INF (int)1e9
+#define pb push_back
+#define ff first
+#define ss second
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pii</span><span class="p">;</span>
+<span class="k">struct</span> <span class="nc">MCMF</span><span class="p">{</span>
+	<span class="k">struct</span> <span class="nc">Edge</span><span class="p">{</span>
+		<span class="kt">int</span> <span class="n">to</span><span class="p">,</span><span class="n">rev</span><span class="p">,</span><span class="n">cap</span><span class="p">,</span><span class="n">cost</span><span class="p">;</span>
+		<span class="n">Edge</span><span class="p">(</span><span class="kt">int</span> <span class="n">to</span><span class="p">,</span> <span class="kt">int</span> <span class="n">rev</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cap</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cost</span><span class="p">)</span><span class="o">:</span><span class="n">to</span><span class="p">(</span><span class="n">to</span><span class="p">),</span><span class="n">rev</span><span class="p">(</span><span class="n">rev</span><span class="p">),</span><span class="n">cap</span><span class="p">(</span><span class="n">cap</span><span class="p">),</span><span class="n">cost</span><span class="p">(</span><span class="n">cost</span><span class="p">){</span>
+		<span class="p">}</span>
+	<span class="p">};</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;&gt;</span> <span class="n">graph</span><span class="p">;</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">pii</span><span class="o">&gt;</span> <span class="n">par</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">src</span><span class="p">,</span><span class="n">snk</span><span class="p">;</span>
+	<span class="n">MCMF</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">src</span><span class="p">,</span> <span class="kt">int</span> <span class="n">snk</span><span class="p">)</span><span class="o">:</span><span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="n">src</span><span class="p">(</span><span class="n">src</span><span class="p">),</span><span class="n">snk</span><span class="p">(</span><span class="n">snk</span><span class="p">){</span>
+		<span class="n">graph</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">5</span><span class="p">);</span>
+		<span class="n">par</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">5</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="kt">void</span> <span class="n">push_edge</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">,</span> <span class="kt">int</span> <span class="n">capa</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cst</span><span class="p">){</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">pb</span><span class="p">(</span><span class="n">Edge</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">graph</span><span class="p">[</span><span class="n">b</span><span class="p">].</span><span class="n">size</span><span class="p">(),</span><span class="n">capa</span><span class="p">,</span><span class="n">cst</span><span class="p">));</span>
+		<span class="n">graph</span><span class="p">[</span><span class="n">b</span><span class="p">].</span><span class="n">pb</span><span class="p">(</span><span class="n">Edge</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">graph</span><span class="p">[</span><span class="n">a</span><span class="p">].</span><span class="n">size</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="n">cst</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="kt">bool</span> <span class="n">SPFA</span><span class="p">(){</span>
+		<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">inq</span><span class="p">,</span><span class="n">dst</span><span class="p">;</span>
+		<span class="n">inq</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+		<span class="n">dst</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span><span class="n">INF</span><span class="p">);</span>		
+		<span class="n">queue</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+		<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">src</span><span class="p">);</span> <span class="n">inq</span><span class="p">[</span><span class="n">src</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">dst</span><span class="p">[</span><span class="n">src</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+			<span class="kt">int</span> <span class="n">h</span><span class="o">=</span><span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="n">inq</span><span class="p">[</span><span class="n">h</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+			<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">graph</span><span class="p">[</span><span class="n">h</span><span class="p">].</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+				<span class="k">auto</span> <span class="n">e</span><span class="o">=</span><span class="n">graph</span><span class="p">[</span><span class="n">h</span><span class="p">][</span><span class="n">i</span><span class="p">];</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">cap</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="n">h</span><span class="p">]</span><span class="o">&lt;</span><span class="n">INF</span> <span class="o">&amp;&amp;</span> <span class="n">dst</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">]</span><span class="o">&gt;</span><span class="n">dst</span><span class="p">[</span><span class="n">h</span><span class="p">]</span><span class="o">+</span><span class="n">e</span><span class="p">.</span><span class="n">cost</span><span class="p">){</span>
+					<span class="n">dst</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">]</span><span class="o">=</span><span class="n">dst</span><span class="p">[</span><span class="n">h</span><span class="p">]</span><span class="o">+</span><span class="n">e</span><span class="p">.</span><span class="n">cost</span><span class="p">;</span> <span class="n">par</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="n">h</span><span class="p">,</span><span class="n">i</span><span class="p">};</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">inq</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+						<span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">);</span>
+						<span class="n">inq</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+					<span class="p">}</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="n">dst</span><span class="p">[</span><span class="n">snk</span><span class="p">]</span><span class="o">!=</span><span class="n">INF</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">pii</span> <span class="n">flow</span><span class="p">(){</span>
+		<span class="kt">int</span> <span class="n">work</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">money</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="n">SPFA</span><span class="p">()){</span>
+			<span class="kt">int</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">INF</span><span class="p">;</span>
+			<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">snk</span><span class="p">;</span><span class="n">i</span><span class="o">!=</span><span class="n">src</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">){</span>
+				<span class="k">auto</span> <span class="o">&amp;</span><span class="n">e</span><span class="o">=</span><span class="n">graph</span><span class="p">[</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">];</span>
+				<span class="n">f</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">e</span><span class="p">.</span><span class="n">cap</span><span class="p">);</span>
+				<span class="n">c</span><span class="o">+=</span><span class="n">e</span><span class="p">.</span><span class="n">cost</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="n">work</span><span class="o">+=</span><span class="n">f</span><span class="p">;</span>
+			<span class="n">money</span><span class="o">+=</span><span class="n">f</span><span class="o">*</span><span class="n">c</span><span class="p">;</span>
+			<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">snk</span><span class="p">;</span><span class="n">i</span><span class="o">!=</span><span class="n">src</span><span class="p">;</span><span class="n">i</span><span class="o">=</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">){</span>
+				<span class="k">auto</span> <span class="o">&amp;</span><span class="n">e</span><span class="o">=</span><span class="n">graph</span><span class="p">[</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ff</span><span class="p">][</span><span class="n">par</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">ss</span><span class="p">];</span>
+				<span class="n">e</span><span class="p">.</span><span class="n">cap</span><span class="o">-=</span><span class="n">f</span><span class="p">;</span>
+				<span class="n">graph</span><span class="p">[</span><span class="n">e</span><span class="p">.</span><span class="n">to</span><span class="p">][</span><span class="n">e</span><span class="p">.</span><span class="n">rev</span><span class="p">].</span><span class="n">cap</span><span class="o">+=</span><span class="n">f</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="p">{</span><span class="n">work</span><span class="p">,</span><span class="n">money</span><span class="p">};</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+	<span class="n">MCMF</span> <span class="n">mc</span><span class="o">=</span><span class="n">MCMF</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">mc</span><span class="p">.</span><span class="n">push_edge</span><span class="p">(</span><span class="n">mc</span><span class="p">.</span><span class="n">src</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+		<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">x</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+			<span class="kt">int</span> <span class="n">y</span><span class="p">,</span><span class="n">c</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">y</span><span class="o">&gt;&gt;</span><span class="n">c</span><span class="p">;</span>
+			<span class="n">mc</span><span class="p">.</span><span class="n">push_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">y</span><span class="o">+</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">c</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="o">+</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">mc</span><span class="p">.</span><span class="n">push_edge</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">mc</span><span class="p">.</span><span class="n">snk</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="n">pii</span> <span class="n">ans</span><span class="o">=</span><span class="n">mc</span><span class="p">.</span><span class="n">flow</span><span class="p">();</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">.</span><span class="n">ff</span><span class="o">&lt;&lt;</span><span class="sc">'\n'</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">.</span><span class="n">ss</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

@@ -1,0 +1,14 @@
+I"J<p><a href="https://www.acmicpc.net/problem/17362">https://www.acmicpc.net/problem/17362</a></p>
+
+<p>UCPC 본선 준비도 할 겸 예선 upsolving을 하려고 한다.(그런데 시간이 없어!!)</p>
+
+<p>아마 이 문제가 예선 문제 중 가장 쉬운 문제 일것이다.</p>
+
+<p>규칙을 찾으면 이 문제는 끝이 난다. 8로 나눈 나머지를 생각해보자!</p>
+
+<pre><code class="language-PYTHON">d={0:2,1:1,2:2,3:3,4:4,5:5,6:4,7:3}
+print(d[int(input())%8])
+</code></pre>
+
+<p>가끔은 이런 문제작을 하는 것도 정신 건강에 이로운 것 같다.</p>
+:ET

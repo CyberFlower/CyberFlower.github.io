@@ -1,0 +1,18 @@
+I"s<p><a href="https://www.acmicpc.net/problem/17389">https://www.acmicpc.net/problem/17389</a></p>
+
+<p>숭고한 공식 풀이는 <a href="https://drive.google.com/file/d/1XwcQgX81fR_2ULyzXoY1DZ1Y9EsXyu-_/view">여기</a>서 보실 수 있습니다.</p>
+
+<p>시키는대로 코드를 작성해 봅시다</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
+<span class="n">s</span><span class="o">=</span><span class="nb">input</span><span class="p">()</span>
+<span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">add</span><span class="o">=</span><span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="s">'X'</span><span class="p">:</span>
+        <span class="n">add</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ans</span><span class="o">+=</span><span class="p">(</span><span class="n">add</span><span class="o">+</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">add</span><span class="o">+=</span><span class="mi">1</span>
+<span class="k">print</span><span class="p">(</span><span class="n">ans</span><span class="p">)</span>
+</code></pre></div></div>
+:ET

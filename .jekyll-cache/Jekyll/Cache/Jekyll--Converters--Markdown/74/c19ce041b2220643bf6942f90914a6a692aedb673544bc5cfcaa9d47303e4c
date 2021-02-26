@@ -1,0 +1,32 @@
+I"�<p><a href="https://www.acmicpc.net/problem/17393">https://www.acmicpc.net/problem/17393</a></p>
+
+<p>숭고한 공식 풀이는 <a href="https://drive.google.com/file/d/1XwcQgX81fR_2ULyzXoY1DZ1Y9EsXyu-_/view">여기</a>서 보실 수 있습니다.</p>
+
+<p><a href="http://www.cplusplus.com/reference/algorithm/upper_bound/">upper_bound</a> 는 여기서 확인할 수 있습니다.</p>
+
+<p>잉크지수보다 큰 수 중에 가장 작은 수의 인덱스를 upper_bound를 이용해 찾으면 멩미가 서있는 인덱스와 upper_bound 사이의 인덱스를 칠할 수 있게 됩니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;bits/stdc++.h&gt;
+#define pb push_back
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">ll</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">500005</span><span class="p">;</span>
+<span class="n">ll</span> <span class="n">arr</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">ll</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+	<span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">ll</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+		<span class="n">v</span><span class="p">.</span><span class="n">pb</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="kt">int</span> <span class="n">p</span><span class="o">=</span><span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">upper_bound</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+		<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">&lt;</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">?</span><span class="mi">0</span><span class="o">:</span><span class="n">p</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="s">" "</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

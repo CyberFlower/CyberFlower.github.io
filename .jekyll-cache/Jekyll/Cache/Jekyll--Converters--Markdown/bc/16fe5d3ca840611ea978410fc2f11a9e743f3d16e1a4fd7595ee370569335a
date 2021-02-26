@@ -1,0 +1,51 @@
+I" <p><a href="https://kcpc19.contest.codeforces.com/group/YxujPqBpFr/contest/261386/problem/H">2019 KCPC 얼마나 예뻐? (신입생 부문 H번 / 일반 부문 D번) 코드 제출 url</a></p>
+
+<p>올바른 괄호 문자열을 조금 바꾸어 말하자면, ‘(‘을 +1로, ‘)’을 -1로 대응하였을 때 prefix sum의 최솟값이 0이고 total sum이 0인 문자열을 의미합니다.</p>
+
+<p>( prefix sum이란 $ prefix_{sum}[i]=\sum_{0}^{i}arr[j] $ 으로, 0번부터 i번까지의 합을 의미합니다.)</p>
+
+<p>따라서 우리는 어떤 sub tree가 pretty 한지 알기 위해서 자식 노드들의 (total_sum, min(prefix_sum) 만 알면 됩니다.</p>
+
+<p>어떤 sub tree를 1(루트) $ \rightarrow $ 2 $ \rightarrow $ 3 $ \rightarrow $ 4 … 이런 식으로 진행된다면, x번째 자식 sub tree로 새로 생기는 최소값은 [1 … x-1] sum + min(x를 루트로 하는 subtree) 이므로 합을 구하는 과정에서 쉽게 같이 구할 수 있습니다.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;bits/stdc++.h&gt;
+#define ff first
+#define ss second
+#define pb push_back
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pii</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">SZ</span><span class="o">=</span><span class="mi">200005</span><span class="p">;</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">graph</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">bra</span><span class="p">[</span><span class="n">SZ</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">tot</span><span class="p">;</span>
+<span class="n">pii</span> <span class="nf">tra</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">sm</span><span class="o">=</span><span class="n">bra</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">mn</span><span class="o">=</span><span class="n">bra</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">nxt</span><span class="o">:</span><span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">]){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">nxt</span><span class="o">==</span><span class="n">p</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+        <span class="n">pii</span> <span class="n">xx</span><span class="o">=</span><span class="n">tra</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">nxt</span><span class="p">);</span>
+        <span class="n">mn</span><span class="o">=</span><span class="n">min</span><span class="p">(</span><span class="n">mn</span><span class="p">,</span><span class="n">sm</span><span class="o">+</span><span class="n">xx</span><span class="p">.</span><span class="n">ss</span><span class="p">);</span>
+        <span class="n">sm</span><span class="o">+=</span><span class="n">xx</span><span class="p">.</span><span class="n">ff</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">mn</span><span class="o">==</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">sm</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="n">tot</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">sm</span><span class="p">,</span><span class="n">mn</span><span class="p">};</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+    <span class="n">ios_base</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span> <span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kt">int</span> <span class="n">x</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+        <span class="n">bra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="mi">0</span><span class="o">?</span><span class="mi">1</span><span class="o">:-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kt">int</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span> <span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="o">&gt;&gt;</span><span class="n">y</span><span class="p">;</span>
+        <span class="n">graph</span><span class="p">[</span><span class="n">x</span><span class="p">].</span><span class="n">pb</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+        <span class="n">graph</span><span class="p">[</span><span class="n">y</span><span class="p">].</span><span class="n">pb</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="n">sort</span><span class="p">(</span><span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span><span class="n">graph</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">end</span><span class="p">());</span>
+    <span class="n">tra</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">tot</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET
