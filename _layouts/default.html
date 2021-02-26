@@ -2,14 +2,12 @@
 <html>
   <head>
     {% include head.html %}
-  <!--
-    {% if page.use_math %}
-      {% include mathjax_support %}
-    {% endif %}
-    {% include mathjax_support.html %}
-  -->
-
-</head>
+    <!--
+      {% if page.use_math %}
+      {% include mathjax_support.html %}
+      {% endif %}
+    -->
+  </head>
 
   <body>
     <div class="visible">
@@ -18,30 +16,5 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="{{ "/assets/js/prism.js" | relative_url }}"></script>
     <script src="{{ "/assets/js/index.min.js" | relative_url }}"></script>
-    <!--
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-          TeX: {
-            equationNumbers: {
-              autoNumber: "AMS"
-            }
-          },
-          tex2jax: {
-          inlineMath: [ ['$', '$'] ],
-          displayMath: [ ['$$', '$$'] ],
-          processEscapes: true,
-        }
-      });
-      MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
-          alert("Math Processing Error: "+message[1]);
-        });
-      MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
-          alert("Math Processing Error: "+message[1]);
-        });
-      </script>
-    -->
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript">
-    </script>
-
   </body>
 </html>
