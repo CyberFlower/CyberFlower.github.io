@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
-{% include head.html %}
-<body>
+  <head>
+    {% include head.html %}
+<!--
+    {% if page.use_math %}
+      {% include mathjax_support %}
+    {% endif %}
+-->
+    {% include mathjax_support %}
+  </head>
+
+  <body>
     <div class="visible">
       {{ content }}
     </div>
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="{{ "/assets/js/prism.js" | relative_url }}"></script>
     <script src="{{ "/assets/js/index.min.js" | relative_url }}"></script>
-
+    <!--
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
           TeX: {
@@ -29,6 +38,7 @@
           alert("Math Processing Error: "+message[1]);
         });
       </script>
+    -->
       <script type="text/javascript" async
               src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
       </script>
