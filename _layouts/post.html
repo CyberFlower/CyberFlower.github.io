@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-{% include header.html %}
-{% include post-head.html %}
+<head>
+  {% include post-head.html %}
+</head>
 
 <body>
-  {% include head.html %}
+  {% include header.html %}
   <header
     class="g-banner post-header {{ site.postPatterns | prepend: 'post-pattern-' }} {{ site.theme-color | prepend: 'bgcolor-' }} {% unless page.cover %}post-no-cover{% endunless %}"
     data-theme="{{ site.theme-color }}"
