@@ -48,7 +48,7 @@ postPatterns: 'circuitBoard'
 # SNS settings
 # url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
 sns:
-  github: '//github.com/CyberFlower'
+  github: 'https://github.com/CyberFlower'
 
 # Tags
 recommend-tags: true # whether or not display recommend-tags on the sidebar
