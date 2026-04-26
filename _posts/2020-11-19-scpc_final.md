@@ -5,7 +5,6 @@ subtitle: 6회 SCPC 본선 후기
 date: 2020-11-19
 categories: Algorithm
 tags: 후기
-author: cyberflower
 ---
 
 ### 2020 SCPC 본선 후기

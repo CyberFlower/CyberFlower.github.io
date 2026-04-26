@@ -5,7 +5,6 @@ subtitle: 볼록 껍질, 로버트 후드
 date: 2019-09-06
 categories: Algorithm
 tags: Algorithm
-author: cyberflower
 ---
 #### 1. 볼록 껍질(Convex Hull) 알고리즘
 ---

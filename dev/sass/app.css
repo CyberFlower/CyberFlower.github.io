@@ -480,7 +480,7 @@ a {
       .g-footer section a:hover {
         color: #83888F; }
 
-.post-header, .markdown-body, .post-wrapper, .author-detail, .social-share-wrapper {
+.post-header, .markdown-body, .post-wrapper, .post-detail, .social-share-wrapper {
   margin: 0 auto; }
 
 .post-wrapper {
@@ -646,10 +646,10 @@ a {
   margin: 0 auto;
   width: 720px; }
 
-.author-detail {
+.post-detail {
   position: relative;
   top: -35px; }
-  .author-detail .comment {
+  .post-detail .comment {
     margin-bottom: 60px; }
 
 .read-next {
@@ -887,7 +887,7 @@ a {
     width: 92%; }
   .post-content .post-subtitle {
     width: 92%; }
-  .author-detail .author-card {
+  .post-detail .author-card {
     width: 92%; } }
 
 @media screen and (max-width: 695px) {
@@ -919,15 +919,15 @@ a {
           font-weight: bold;
           color: #A5A8B0;
           opacity: 1; }
-  .author-detail .author-card .sns-links {
+  .post-detail .author-card .sns-links {
     margin-top: 24px; }
-    .author-detail .author-card .sns-links li {
+    .post-detail .author-card .sns-links li {
       width: 36px;
       height: 36px; }
-      .author-detail .author-card .sns-links li .iconfont {
+      .post-detail .author-card .sns-links li .iconfont {
         font-size: 32px;
         line-height: 40px; }
-  .author-detail .comment {
+  .post-detail .comment {
     width: 90%; }
   .read-next {
     display: block; }

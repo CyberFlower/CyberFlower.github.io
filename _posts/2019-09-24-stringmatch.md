@@ -5,7 +5,6 @@ subtitle: KMP, Trie, Aho-Corasick
 date: 2019-09-24
 categories: Algorithm
 tags: Algorithm
-author: cyberflower
 ---
 
 문자열 A에서 문자열 B를 찾는다고 가정합시다. 보통 문자열 알고리즘을 배울 때 A를 짚더미, B를 바늘이라고도 표현합니다. 대부분의 경우 A가 매우 길고 그에 비해 B가 매우 짧기 때문입니다. 설명의 편의를 위하여 앞으로 A의 길이를 n, B의 길이를 m이라고 하겠습니다.

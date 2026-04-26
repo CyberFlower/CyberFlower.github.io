@@ -19,12 +19,6 @@ nav:
 footer:
   since: 2019
 
-# Author
-author: cyberflower
-nickname: cyberflower
-bio:
-avatar: '/assets/img/profile.jpg'
-
 # Search
 search: true
 
@@ -44,11 +38,6 @@ theme-color: 'default'  # pink or default
 
 # Post header background patterns (when the post no cover): circuitBoard, overlappingCircles, food, glamorous, ticTacToe, seaOfClouds
 postPatterns: 'circuitBoard'
-
-# SNS settings
-# url: email, weibo, zhihu, twitter, instagram, juejin, github, douban, facebook, dribble, uicn, jianshu, medium, linkedin
-sns:
-  github: 'https://github.com/CyberFlower'
 
 # Tags
 recommend-tags: true # whether or not display recommend-tags on the sidebar

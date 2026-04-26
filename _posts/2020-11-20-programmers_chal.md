@@ -5,7 +5,6 @@ subtitle: 프로그래머스 10월 챌린지 후기
 date: 2020-11-20
 categories: Algorithm
 tags: 후기
-author: cyberflower
 mathjax: true
 ---
 
